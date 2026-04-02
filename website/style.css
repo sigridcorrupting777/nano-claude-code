@@ -193,6 +193,7 @@ code {
 .hero-bg-grid {
   position: absolute;
   inset: 0;
+  pointer-events: none;
   background-image:
     linear-gradient(rgba(108, 92, 231, 0.03) 1px, transparent 1px),
     linear-gradient(90deg, rgba(108, 92, 231, 0.03) 1px, transparent 1px);
