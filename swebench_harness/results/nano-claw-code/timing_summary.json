@@ -1,0 +1,28 @@
+{
+  "instance_count": 1,
+  "run_total_seconds": 269.41,
+  "run_total_human": "4m 29s",
+  "total_seconds": {
+    "min": 266.16,
+    "max": 266.16,
+    "mean": 266.16,
+    "median": 266.16,
+    "total": 266.16
+  },
+  "clone_seconds": {
+    "min": 21.78,
+    "max": 21.78,
+    "mean": 21.78,
+    "median": 21.78,
+    "total": 21.78
+  },
+  "agent_seconds": {
+    "min": 244.34,
+    "max": 244.34,
+    "mean": 244.34,
+    "median": 244.34,
+    "total": 244.34
+  },
+  "timed_out_count": 0,
+  "total_cost_usd": 0
+}
