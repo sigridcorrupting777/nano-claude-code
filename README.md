@@ -126,7 +126,20 @@ Beyond tools, the agent preserves key infrastructure:
 | API retry | `agent.py` | Exponential backoff with jitter on 429/5xx, respects `Retry-After` headers |
 | OpenAI compat | `openai_compat.py` | Alternative backend for non-Anthropic providers (Kimi, MiniMax, etc.) |
 
-### 3. Comparative SWE-bench Evaluation
+### 3. Multi-Provider Model Support
+
+The original Claude Code is locked to Anthropic's API. Nano-Claw-Code adds first-class support for **any OpenAI-compatible endpoint**, enabling evaluation and deployment with third-party models:
+
+| Provider | Env Vars | Examples |
+|----------|----------|----------|
+| **Anthropic** (direct) | `ANTHROPIC_API_KEY` | Claude Sonnet, Claude Opus |
+| **OpenRouter** | `OPENROUTER_API_KEY` + `OPENROUTER_MODEL` | Any model on OpenRouter's catalog |
+| **OpenAI-compatible** | `OPENAI_COMPAT_BASE_URL` + `OPENAI_COMPAT_API_KEY` | Azure AI, Kimi (Moonshot), MiniMax, DeepSeek, local vLLM/Ollama |
+| **LiteLLM Proxy** | `ANTHROPIC_BASE_URL` + `ANTHROPIC_API_KEY` | Unified gateway to 100+ providers |
+
+The `openai_compat.py` module (~600 lines) translates the agent's Anthropic-native tool-use protocol into standard OpenAI Chat Completions format — handling tool schemas, streaming deltas, and multi-turn tool call/result pairs. Provider detection is automatic based on environment variables, requiring zero code changes to switch models.
+
+### 4. Comparative SWE-bench Evaluation
 
 Both variants are evaluated under identical conditions with full trace logging — every tool call, model response, and thinking block is captured for analysis.
 

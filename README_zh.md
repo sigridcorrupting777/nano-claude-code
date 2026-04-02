@@ -123,7 +123,20 @@ Nano-Claw-Code 是一个从完整版 [Claude Code](https://github.com/anthropics
 | API 重试 | `agent.py` | 429/5xx 指数退避 + 抖动，支持 `Retry-After` 头 |
 | OpenAI 兼容 | `openai_compat.py` | 非 Anthropic 供应商的替代后端（Kimi、MiniMax 等） |
 
-### 3. SWE-bench 对比评测
+### 3. 多供应商模型支持
+
+原始 Claude Code 仅支持 Anthropic API。Nano-Claw-Code 新增了对**任意 OpenAI 兼容端点**的原生支持，支持使用第三方模型进行评测和部署：
+
+| 供应商 | 环境变量 | 示例 |
+|--------|----------|------|
+| **Anthropic**（直连） | `ANTHROPIC_API_KEY` | Claude Sonnet、Claude Opus |
+| **OpenRouter** | `OPENROUTER_API_KEY` + `OPENROUTER_MODEL` | OpenRouter 目录中的任意模型 |
+| **OpenAI 兼容** | `OPENAI_COMPAT_BASE_URL` + `OPENAI_COMPAT_API_KEY` | Azure AI、Kimi（月之暗面）、MiniMax、DeepSeek、本地 vLLM/Ollama |
+| **LiteLLM Proxy** | `ANTHROPIC_BASE_URL` + `ANTHROPIC_API_KEY` | 统一网关，支持 100+ 供应商 |
+
+`openai_compat.py` 模块（~600 行）将 Agent 的 Anthropic 原生工具调用协议转换为标准 OpenAI Chat Completions 格式 — 处理工具 schema、流式增量和多轮工具调用/结果对。供应商检测基于环境变量自动完成，切换模型无需修改代码。
+
+### 4. SWE-bench 对比评测
 
 两个版本在相同条件下评测，评测框架记录完整的 trace 日志 — 包括每个工具调用、模型回复和思考过程。
 
