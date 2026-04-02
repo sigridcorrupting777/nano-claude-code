@@ -3,7 +3,9 @@ name: Deploy to GitHub Pages
 on:
   push:
     branches: [main]
-    paths: [website/**]
+    paths:
+      - 'website/**'
+      - '.github/workflows/pages.yml'
   workflow_dispatch:
 
 permissions:
@@ -24,6 +26,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/configure-pages@v5
+
+      # Project Pages live at https://<org>.github.io/<repo>/ ; without a trailing
+      # slash on the URL, relative assets like style.css resolve to the domain
+      # root and 404. Inject <base href="/<repo>/"> only in CI (local file:// or
+      # `python -m http.server` in website/ stays unchanged in git).
+      - name: Inject Pages base href for project site
+        env:
+          REPO_NAME: ${{ github.event.repository.name }}
+        run: |
+          python3 << 'PY'
+          from pathlib import Path
+          import os
+          repo = os.environ["REPO_NAME"]
+          path = Path("website/index.html")
+          text = path.read_text(encoding="utf-8")
+          if "<base " in text:
+              print("Base tag already present; skip inject")
+          else:
+              line = f'  <base href="/{repo}/">'
+              text = text.replace("<head>", f"<head>\n{line}", 1)
+              path.write_text(text, encoding="utf-8")
+              print(f"Injected <base href=\"/{repo}/\">")
+          PY
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: website
