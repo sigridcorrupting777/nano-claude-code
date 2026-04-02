@@ -17,7 +17,7 @@ Nano-Claw-Code is a **lightweight Python coding agent** distilled from the full 
 1. **TypeScript pruning** — We analyzed tool usage on SWE-bench and removed 29 unused tools and 4 service groups from the original Claude Code (~405,500 → ~378,100 core lines).
 2. **Python re-implementation** — We then rewrote the core agent loop, tools, and CLI in pure Python, compressing ~378,100 lines of TypeScript into **~5,800 lines of Python** while preserving the same tool-use interface and agentic capabilities.
 
-The result **matches** the full TypeScript agent on [SWE-bench Lite](https://www.swebench.com/).
+We provide code for result evaluation on [SWE-bench Lite](https://www.swebench.com/).
 
 ---
 
