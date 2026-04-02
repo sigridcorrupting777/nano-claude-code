@@ -5,6 +5,14 @@
     <em>A distilled and optimized coding agent in ~5,800 lines of Python — less code, same performance.</em>
   </p>
   <p align="center">
+    <a href="https://openlair.github.io/nano-claw-code">
+      <img src="https://img.shields.io/badge/%F0%9F%8C%90-Homepage-CB2B3E?style=for-the-badge" alt="Homepage" />
+    </a>
+    <a href="https://github.com/OpenLAIR/nano-claw-code">
+      <img src="https://img.shields.io/badge/%F0%9F%A6%9E-Nano--Claw--Code-CB2B3E?style=for-the-badge" alt="Nano-Claw-Code" />
+    </a>
+  </p>
+  <p align="center">
     <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License: MIT" /></a>
   </p>
   <p align="center">
