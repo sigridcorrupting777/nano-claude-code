@@ -1124,15 +1124,109 @@ def _setup_readline() -> None:
 
 # ── Interactive REPL ──────────────────────────────────────────────────────
 
+MASCOT_CONFIG_PATH = Path.home() / ".config" / "nano-claw-code" / "mascot"
+
+MASCOT_NAMES = ["duck", "cat", "bunny", "frog", "penguin"]
+
+
+def _get_mascot_art() -> dict[str, list[tuple[str, str]]]:
+    """Return (plain, colored) art rows for each mascot. Each plain row is 17 chars."""
+    r = "\033[0m"
+    ey = "\033[38;5;255m"
+
+    yw = "\033[38;5;220m"; dk = "\033[38;5;178m"; ob = "\033[38;5;208m"
+    duck = [
+        ("      ▄██▄       ", f"      {dk}▄{yw}██{dk}▄{r}       "),
+        ("     █ ●█▀▀      ", f"     {yw}█ {ey}●{yw}█{ob}▀▀{r}      "),
+        ("     ▀█████      ", f"     {dk}▀{yw}█████{r}      "),
+        ("      ▀██▀       ", f"      {dk}▀{yw}██{dk}▀{r}       "),
+    ]
+
+    cp = "\033[38;5;183m"; cd = "\033[38;5;139m"; pk = "\033[38;5;217m"
+    cat = [
+        ("    ▄▀    ▀▄     ", f"    {cd}▄▀    ▀▄{r}     "),
+        ("    █ ●  ● █     ", f"    {cp}█ {ey}●  ●{cp} █{r}     "),
+        ("    █  ▽▽  █     ", f"    {cp}█  {pk}▽▽{cp}  █{r}     "),
+        ("    ▀██████▀     ", f"    {cd}▀{cp}██████{cd}▀{r}     "),
+    ]
+
+    bw = "\033[38;5;255m"; bd = "\033[38;5;249m"
+    bunny = [
+        ("     ▄█▄  ▄█▄    ", f"     {bd}▄{bw}█{pk}▄{r}  {bd}▄{bw}█{pk}▄{r}    "),
+        ("     ██  ██      ", f"     {bw}██  ██{r}      "),
+        ("     █●▽▽●█      ", f"     {bw}█{ey}●{pk}▽▽{ey}●{bw}█{r}      "),
+        ("     ▀████▀      ", f"     {bd}▀{bw}████{bd}▀{r}      "),
+    ]
+
+    fg = "\033[38;5;82m"; fd = "\033[38;5;34m"; fw = "\033[38;5;226m"
+    frog = [
+        ("    ●▄▄▄▄▄▄●     ", f"    {fw}●{fd}▄▄▄▄▄▄{fw}●{r}     "),
+        ("    ████████     ", f"    {fg}████████{r}     "),
+        ("    █ ▽  ▽ █     ", f"    {fg}█ {fw}▽  ▽ {fg}█{r}     "),
+        ("    ▀██████▀     ", f"    {fd}▀{fg}██████{fd}▀{r}     "),
+    ]
+
+    pb = "\033[38;5;236m"; pw = "\033[38;5;255m"; po = "\033[38;5;208m"
+    penguin = [
+        ("      ▄██▄       ", f"      {pb}▄{pw}██{pb}▄{r}       "),
+        ("     █▀●●▀█      ", f"     {pb}█{pw}▀{ey}●●{pw}▀{pb}█{r}      "),
+        ("     █ ▄▄ █      ", f"     {pb}█ {pw}▄▄ {pb}█{r}      "),
+        ("      ▀██▀       ", f"      {pb}▀{po}██{pb}▀{r}       "),
+    ]
+
+    return {"duck": duck, "cat": cat, "bunny": bunny, "frog": frog, "penguin": penguin}
+
+
+def _load_mascot() -> str | None:
+    """Load saved mascot preference."""
+    try:
+        return MASCOT_CONFIG_PATH.read_text().strip()
+    except OSError:
+        return None
+
+
+def _save_mascot(name: str) -> None:
+    """Save mascot preference."""
+    MASCOT_CONFIG_PATH.parent.mkdir(parents=True, exist_ok=True)
+    MASCOT_CONFIG_PATH.write_text(name + "\n")
+
+
+def _pick_mascot() -> str:
+    """Interactive mascot picker shown on first run."""
+    r = "\033[0m"; b = "\033[1m"; d = "\033[2m"
+    art = _get_mascot_art()
+    print()
+    print(f"  {b}Pick your mascot:{r}")
+    print()
+    for i, name in enumerate(MASCOT_NAMES, 1):
+        rows = art[name]
+        label = f"  {b}{i}. {name.capitalize()}{r}"
+        print(label)
+        for _, colored in rows:
+            print(f"  {colored}")
+    print()
+    while True:
+        try:
+            choice = input(f"  Enter number (1-{len(MASCOT_NAMES)}) [{d}default: 1{r}]: ").strip()
+        except (EOFError, KeyboardInterrupt):
+            choice = "1"
+        if choice == "":
+            choice = "1"
+        if choice.isdigit() and 1 <= int(choice) <= len(MASCOT_NAMES):
+            selected = MASCOT_NAMES[int(choice) - 1]
+            _save_mascot(selected)
+            print(f"\n  Saved! You picked {b}{selected.capitalize()}{r}. "
+                  f"{d}(change anytime with --mascot){r}\n")
+            return selected
+        print(f"  Please enter a number between 1 and {len(MASCOT_NAMES)}.")
+
+
 def _print_banner(provider: str, provider_label: str, model: str, perm_mode: str,
                   tools_count: int, resume_state: dict | None = None,
                   state: AgentState | None = None,
-                  session_title: str = "", skill_count: int = 0) -> None:
-    """Print the startup banner with claw mascot."""
-    c1 = "\033[38;5;220m"  # yellow (duck body)
-    c2 = "\033[38;5;178m"  # darker yellow (shadow)
-    c3 = "\033[38;5;208m"  # orange (beak)
-    ey = "\033[38;5;255m"  # white (eye)
+                  session_title: str = "", skill_count: int = 0,
+                  mascot: str | None = None) -> None:
+    """Print the startup banner with chosen mascot."""
     g1 = "\033[38;5;40m"   # bright green (title text)
     mg = "\033[38;5;176m"  # muted mauve
     wh = "\033[38;5;252m"  # warm white
@@ -1153,25 +1247,22 @@ def _print_banner(provider: str, provider_label: str, model: str, perm_mode: str
     cwd_str = str(Path.cwd())
     g = " " * 17
 
-    rows: list[tuple[str, str]] = []
+    if not mascot or mascot not in MASCOT_NAMES:
+        mascot = "duck"
+    art_rows = _get_mascot_art()[mascot]
 
+    info_lines = [
+        ("nano claw code", f"{g1}{b}nano claw code{r}"),
+        ("✦ Nano AI Coding Agent ✦", f"{g1}✦ Nano AI Coding Agent ✦{r}"),
+        (f"Provider     {provider}", f"{wh}Provider{r}     {provider_label}"),
+        (f"Model        {model}", f"{wh}Model{r}        {cy}{b}{model}{r}"),
+    ]
+
+    rows: list[tuple[str, str]] = []
     rows.append(("", ""))
-    rows.append((
-        "      ▄██▄       nano claw code",
-        f"      {c2}▄{c1}██{c2}▄{r}       {g1}{b}nano claw code{r}",
-    ))
-    rows.append((
-        "     █ ●█▀▀      ✦ Nano AI Coding Agent ✦",
-        f"     {c1}█ {ey}●{c1}█{c3}▀▀{r}      {g1}✦ Nano AI Coding Agent ✦{r}",
-    ))
-    rows.append((
-        f"     ▀█████      Provider     {provider}",
-        f"     {c2}▀{c1}█████{r}      {wh}Provider{r}     {provider_label}",
-    ))
-    rows.append((
-        f"      ▀██▀       Model        {model}",
-        f"      {c2}▀{c1}██{c2}▀{r}       {wh}Model{r}        {cy}{b}{model}{r}",
-    ))
+    for (art_plain, art_colored), (info_plain, info_colored) in zip(art_rows, info_lines):
+        rows.append((art_plain + info_plain, art_colored + info_colored))
+
     rows.append((
         f"{g}Tools        {tools_plain}",
         f"{g}{wh}Tools{r}        {tools_label}",
@@ -1292,9 +1383,16 @@ def run_repl(config: dict, resume_state: dict | None = None) -> int:
         "proxy": _clr(api_env.get("base_url", "proxy"), "yellow"),
     }.get(provider, _clr(provider, "yellow"))
 
+    mascot_name = config.get("_mascot")
+    if not mascot_name:
+        mascot_name = _load_mascot()
+    if not mascot_name:
+        mascot_name = _pick_mascot()
+
     _print_banner(provider, provider_label, model, perm_mode, len(tools),
                   resume_state=resume_state, state=state,
-                  session_title=session_title, skill_count=skill_count)
+                  session_title=session_title, skill_count=skill_count,
+                  mascot=mascot_name)
 
     last_ctrl_c = 0.0
     while True:
@@ -1537,6 +1635,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("-n", "--name", default=None,
                    help="Set a display name/title for this session (shown in /load)")
     p.add_argument("--version", action="store_true", help="Print version and exit")
+    p.add_argument("--mascot", default=None, choices=MASCOT_NAMES,
+                   help="Choose startup mascot (duck, cat, bunny, frog, penguin)")
     return p
 
 
@@ -1589,6 +1689,9 @@ def main(argv: list[str] | None = None) -> int:
         config["permission_mode"] = args.permission_mode
     if args.name:
         config["_session_title"] = args.name.strip()
+    if args.mascot:
+        _save_mascot(args.mascot)
+        config["_mascot"] = args.mascot
 
     prompt = args.print_prompt
     if not prompt and args.prompt:
