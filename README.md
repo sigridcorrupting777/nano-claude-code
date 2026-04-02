@@ -19,14 +19,12 @@ Nano-Claw-Code is a **lightweight Python coding agent** distilled from the full 
 
 We provide code for result evaluation on [SWE-bench Lite](https://www.swebench.com/).
 
-Nano-Claw-Code is part of **[Dr. Claw](https://github.com/OpenLAIR/Dr.Claw)**, a full-stack AI research workspace.
+
+
+
 
 <p align="center">
-  <img src="assets/drclaw_homepage.png" width="700" alt="Dr. Claw — AI Research Assistant" />
-</p>
-
-<p align="center">
-  <img src="assets/drclaw_product.png" width="700" alt="Dr. Claw — Product Screenshot" />
+  <img src="assets/screenshot.png" width="700" alt="Dr. Claw — Product Screenshot" />
 </p>
 
 ---

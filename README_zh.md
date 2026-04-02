@@ -19,15 +19,10 @@ Nano-Claw-Code 是一个从完整版 [Claude Code](https://github.com/anthropics
 
 最终结果在 [SWE-bench Lite](https://www.swebench.com/) 上**达到**完整版 TypeScript Agent 的表现。
 
-Nano-Claw-Code 是 **[Dr. Claw](https://github.com/OpenLAIR/Dr.Claw)** 全栈 AI 研究工作台的一部分。
-
 <p align="center">
-  <img src="assets/drclaw_homepage.png" width="700" alt="Dr. Claw — AI 研究助手" />
+  <img src="assets/screenshot.png" width="700" alt="Dr. Claw — Product Screenshot" />
 </p>
 
-<p align="center">
-  <img src="assets/drclaw_product.png" width="700" alt="Dr. Claw — 产品截图" />
-</p>
 
 ---
 
