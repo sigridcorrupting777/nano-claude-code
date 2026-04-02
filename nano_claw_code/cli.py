@@ -1196,7 +1196,7 @@ def _pick_mascot() -> str:
     r = "\033[0m"; b = "\033[1m"; d = "\033[2m"
     art = _get_mascot_art()
     print()
-    print(f"  {b}Pick your mascot:{r}")
+    print(f"  {b}Pick your coder:{r}")
     print()
     for i, name in enumerate(MASCOT_NAMES, 1):
         rows = art[name]
