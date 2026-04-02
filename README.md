@@ -32,6 +32,7 @@
 - [Distillation pipeline](#distillation-pipeline)
 - [Repository structure](#repository-structure)
 - [Setup](#setup)
+- [API providers](#api-providers)
 - [Usage](#usage)
 - [SWE-bench evaluation](#swe-bench-evaluation)
 - [License](#license)
@@ -333,6 +334,81 @@ E2e / integration need `ANTHROPIC_API_KEY` (`sk-ant-*`) except `test_e2e_cli_ver
 
 ---
 
+## API providers
+
+Put secrets in **`.env`** (or export in your shell). Files are discovered from the **current working directory up to the git root** (closer directories override parents). See [`.env.example`](.env.example).
+
+The client picks a backend using the **first match** below (highest priority first). If you enable multiple routes at once, the winner is deterministic—avoid leaving stray `OPENAI_COMPAT_*` variables set when you mean to use Anthropic or OpenRouter only.
+
+| Priority | When it applies | Typical use |
+|----------|-----------------|-------------|
+| 1 | `OPENAI_COMPAT_BASE_URL` **and** `OPENAI_COMPAT_API_KEY` are both non-empty | Azure OpenAI / AI Foundry, OpenAI-compatible gateways, some Kimi/MiniMax HTTP APIs |
+| 2 | `ANTHROPIC_API_KEY` starts with `sk-ant-` | Official [Anthropic](https://docs.anthropic.com/) API |
+| 3 | `OPENROUTER_API_KEY` is set (often `sk-or-v1-…`) | [OpenRouter](https://openrouter.ai/) (Claude, GPT, Kimi, MiniMax, …) |
+| 4 | `ANTHROPIC_API_KEY` **and** `ANTHROPIC_BASE_URL` are both set | Self-hosted or vendor **Anthropic-compatible** HTTP proxies |
+| 5 | `ANTHROPIC_API_KEY` or `ANTHROPIC_AUTH_TOKEN` without a custom base URL | Treated as Anthropic API key on the default host |
+
+**Model names** (set one that matches your provider—see table):
+
+| Variable | Used when |
+|----------|-----------|
+| `OPENAI_COMPAT_MODEL` | OpenAI-compat route (fallback: `MODEL`) |
+| `ANTHROPIC_MODEL` | Direct Anthropic |
+| `OPENROUTER_MODEL` | OpenRouter (fallback: `MODEL`) |
+| `MODEL` | Generic fallback for several paths |
+
+TOML / `~/.nano_claw/config.json` can also set `model` if you do **not** set any of `MODEL`, `ANTHROPIC_MODEL`, `OPENROUTER_MODEL`, or `OPENAI_COMPAT_MODEL` in `.env`/shell (see **Setup → Optional — TOML** above).
+
+### Anthropic (direct)
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-api03-...
+ANTHROPIC_MODEL=claude-sonnet-4-20250514   # optional
+```
+
+If your key is `sk-ant-*` and **`ANTHROPIC_BASE_URL` does not appear in any merged `.env` file**, the CLI clears `ANTHROPIC_BASE_URL` from the process environment so a shell-wide OpenRouter URL does not send official keys to the wrong host.
+
+### OpenRouter
+
+```bash
+OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_MODEL=anthropic/claude-sonnet-4-20250514
+# Optional custom API root:
+# OPENROUTER_BASE_URL=https://openrouter.ai/api
+```
+
+Pick any [OpenRouter model id](https://openrouter.ai/models) (e.g. `moonshotai/kimi-k2`, `anthropic/claude-3-5-sonnet-20241022`). The app uses the Anthropic SDK against OpenRouter’s Anthropic-compatible surface.
+
+### OpenAI-compatible (Azure, Kimi HTTP API, vLLM, …)
+
+Both URL and key are required; this path **wins over** Anthropic/OpenRouter if both compat vars are set.
+
+```bash
+OPENAI_COMPAT_BASE_URL=https://YOUR_RESOURCE.openai.azure.com/openai/v1/
+OPENAI_COMPAT_API_KEY=...
+OPENAI_COMPAT_MODEL=your-deployment-or-model-name
+```
+
+Use the **Chat Completions–compatible** base URL your vendor documents (often ends with `/v1/`). For local servers (e.g. vLLM), point `OPENAI_COMPAT_BASE_URL` at `http://127.0.0.1:8000/v1` (exact path depends on the server).
+
+### Generic Anthropic-compatible proxy (e.g. LiteLLM)
+
+Configure your proxy to expose an **Anthropic Messages–compatible** API, then:
+
+```bash
+ANTHROPIC_BASE_URL=http://127.0.0.1:4000
+ANTHROPIC_API_KEY=anything-or-litellm-master-key
+MODEL=claude-3-5-sonnet-20241022   # or the model id your proxy expects
+```
+
+See [LiteLLM Proxy](https://docs.litellm.ai/) for routing many providers through one endpoint. Do **not** use a `sk-ant-*` key here unless your proxy is meant to receive real Anthropic keys.
+
+### One-shot CLI
+
+The same variables apply when running `nano-claw-code -p "..."` or `./start.sh` from the project directory (or after exporting globally).
+
+---
+
 ## Usage
 
 ### One-shot prompt
@@ -342,21 +418,7 @@ E2e / integration need `ANTHROPIC_API_KEY` (`sk-ant-*`) except `test_e2e_cli_ver
 # or: nano-claw-code -p "Explain this codebase"
 ```
 
-### Third-party models (OpenRouter)
-
-```bash
-export OPENROUTER_API_KEY="sk-or-xxx"
-export OPENROUTER_MODEL="moonshotai/kimi-k2"
-./start.sh
-```
-
-For unified provider management, you can also use [LiteLLM Proxy](https://docs.litellm.ai/):
-
-```bash
-export ANTHROPIC_BASE_URL="http://127.0.0.1:4000"
-export ANTHROPIC_API_KEY="sk-anything"
-export MODEL="moonshotai/kimi-k2"
-```
+Third-party models and proxies are configured with the environment variables above; see [API providers](#api-providers).
 
 ---
 

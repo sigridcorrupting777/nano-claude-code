@@ -24,6 +24,7 @@
 - [蒸馏流程](#蒸馏流程)
 - [仓库结构](#仓库结构)
 - [安装](#安装)
+- [API 服务商接入](#api-服务商接入)
 - [使用](#使用)
 - [SWE-bench 评测](#swe-bench-评测)
 - [许可](#许可)
@@ -323,6 +324,81 @@ E2e / integration 需要 `ANTHROPIC_API_KEY`（`sk-ant-*`），仅 `test_e2e_cli
 
 ---
 
+## API 服务商接入
+
+密钥放在 **`.env`** 或 shell `export` 中。`.env` 会从**当前工作目录沿父目录一直找到 git 根目录**，越靠近当前目录的优先级越高。完整示例见 [`.env.example`](.env.example)。
+
+后端按下面**自上而下第一个匹配**决定（与 `config.resolve_api_env` 一致）。若同时配置了多种方式，实际生效的是固定优先级——不用的路由请删掉对应变量，避免误走 **OpenAI 兼容**路径（`OPENAI_COMPAT_*` 两者都非空时优先级最高）。
+
+| 优先级 | 条件 | 典型场景 |
+|--------|------|----------|
+| 1 | `OPENAI_COMPAT_BASE_URL` 与 `OPENAI_COMPAT_API_KEY` **均非空** | Azure OpenAI / AI Foundry、各类 OpenAI Chat Completions 兼容网关、部分 Kimi/MiniMax HTTP 接入 |
+| 2 | `ANTHROPIC_API_KEY` 以 `sk-ant-` 开头 | 官方 [Anthropic](https://docs.anthropic.com/) API |
+| 3 | 设置了 `OPENROUTER_API_KEY`（常见 `sk-or-v1-…`） | [OpenRouter](https://openrouter.ai/)（Claude、GPT、Kimi、MiniMax 等） |
+| 4 | `ANTHROPIC_API_KEY` 与 `ANTHROPIC_BASE_URL` **同时**设置 | 自建或厂商提供的 **Anthropic Messages 兼容** HTTP 代理 |
+| 5 | 仅有 `ANTHROPIC_API_KEY` 或 `ANTHROPIC_AUTH_TOKEN`，且无自定义 base URL | 按默认 Anthropic 官方地址走 |
+
+**模型名**（按供应商择一设置）：
+
+| 变量 | 适用路由 |
+|------|----------|
+| `OPENAI_COMPAT_MODEL` | OpenAI 兼容（也可用 `MODEL` 兜底） |
+| `ANTHROPIC_MODEL` | 直连 Anthropic |
+| `OPENROUTER_MODEL` | OpenRouter（也可用 `MODEL` 兜底） |
+| `MODEL` | 多路径通用兜底 |
+
+若在 `.env`/shell 里**没有**设置 `MODEL`、`ANTHROPIC_MODEL`、`OPENROUTER_MODEL`、`OPENAI_COMPAT_MODEL` 任一，也可以用 TOML 或 `~/.nano_claw/config.json` 里的 `model`（见上文 **安装 → 可选 — TOML**）。
+
+### Anthropic 直连
+
+```bash
+ANTHROPIC_API_KEY=sk-ant-api03-...
+ANTHROPIC_MODEL=claude-sonnet-4-20250514   # 可选
+```
+
+当密钥为 `sk-ant-*` 且**任意一层合并后的 `.env` 里都不含** `ANTHROPIC_BASE_URL` 键时，进程会清除环境中的 `ANTHROPIC_BASE_URL`，避免 shell 里为其它工具配置的 OpenRouter 地址把官方 key 发到错误主机。
+
+### OpenRouter
+
+```bash
+OPENROUTER_API_KEY=sk-or-v1-...
+OPENROUTER_MODEL=anthropic/claude-sonnet-4-20250514
+# 可选自定义 API 根：
+# OPENROUTER_BASE_URL=https://openrouter.ai/api
+```
+
+模型 id 以 [OpenRouter 模型列表](https://openrouter.ai/models) 为准（如 `moonshotai/kimi-k2`）。客户端通过 Anthropic SDK 访问 OpenRouter 的 Anthropic 兼容接口。
+
+### OpenAI 兼容（Azure、Kimi HTTP、vLLM 等）
+
+**必须同时**配置 URL 与 key；且只要两者都非空，就会**优先于** Anthropic/OpenRouter 直连逻辑。
+
+```bash
+OPENAI_COMPAT_BASE_URL=https://YOUR_RESOURCE.openai.azure.com/openai/v1/
+OPENAI_COMPAT_API_KEY=...
+OPENAI_COMPAT_MODEL=部署名或模型名
+```
+
+`OPENAI_COMPAT_BASE_URL` 需为厂商文档中的 **Chat Completions 兼容**根路径（常见以 `/v1/` 结尾）。本地 vLLM 等可指向 `http://127.0.0.1:8000/v1`（以实际服务为准）。
+
+### 通用 Anthropic 兼容代理（如 LiteLLM）
+
+代理需暴露 **Anthropic Messages 兼容** API，例如：
+
+```bash
+ANTHROPIC_BASE_URL=http://127.0.0.1:4000
+ANTHROPIC_API_KEY=任意字符串或 LiteLLM 主密钥
+MODEL=claude-3-5-sonnet-20241022   # 以代理要求的 id 为准
+```
+
+多供应商统一出口可参考 [LiteLLM Proxy](https://docs.litellm.ai/)。除非代理设计为接收真 Anthropic 密钥，否则此处**不要**填 `sk-ant-*` 官方 key。
+
+### 命令行单次运行
+
+`nano-claw-code -p "..."` 或 `./start.sh` 与交互模式使用同一套环境变量；请在项目目录放置 `.env` 或先 `export`。
+
+---
+
 ## 使用
 
 ### 单次提问
@@ -332,21 +408,7 @@ E2e / integration 需要 `ANTHROPIC_API_KEY`（`sk-ant-*`），仅 `test_e2e_cli
 # 或：nano-claw-code -p "解释这个代码库"
 ```
 
-### 通过 OpenRouter 使用第三方模型
-
-```bash
-export OPENROUTER_API_KEY="sk-or-xxx"
-export OPENROUTER_MODEL="moonshotai/kimi-k2"
-./start.sh
-```
-
-也可以通过 [LiteLLM Proxy](https://docs.litellm.ai/) 统一管理供应商：
-
-```bash
-export ANTHROPIC_BASE_URL="http://127.0.0.1:4000"
-export ANTHROPIC_API_KEY="sk-anything"
-export MODEL="moonshotai/kimi-k2"
-```
+第三方模型与代理的配置方式见 [API 服务商接入](#api-服务商接入)。
 
 ---
 
