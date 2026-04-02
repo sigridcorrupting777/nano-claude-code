@@ -1,4 +1,5 @@
 <p align="center">
+<img src="assets/nanoclaw.png" alt="Dr. Claw" width="128" height="128">
   <h1 align="center">Nano-Claw-Code</h1>
   <p align="center">
     <em>蒸馏后的编程智能体 — 更少工具，同等性能，~5,800 行 Python。</em>
