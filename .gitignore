@@ -15,6 +15,7 @@ htmlcov/
 # SWE-bench harness outputs
 swebench_harness/results/*/predictions.jsonl
 swebench_harness/results/*/traces/
+swebench_harness/results/*
 swebench_harness/workspaces/
 swebench_harness/logs/
 swebench_harness/*.json

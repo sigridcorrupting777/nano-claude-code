@@ -73,7 +73,7 @@ cp .env.example .env                # 可选；编辑密钥（或使用下方 ex
 
 ## 主要结果
 
-在 SWE-bench Lite 前 50 个实例上评测，模型为 `claude-sonnet-4-20250514`：
+在 SWE-bench Lite 前 50 个实例上评测，模型为 `claude-sonnet-4-6`：
 
 | 版本 | 语言 | 工具数 | 核心代码行数 | 提交 | 解决 | 解决率 |
 |------|------|--------|------------|------|------|--------|
@@ -353,7 +353,7 @@ E2e / integration 需要 `ANTHROPIC_API_KEY`（`sk-ant-*`），仅 `test_e2e_cli
 
 ```bash
 ANTHROPIC_API_KEY=sk-ant-api03-...
-ANTHROPIC_MODEL=claude-sonnet-4-20250514   # 可选
+ANTHROPIC_MODEL=claude-sonnet-4-6   # 可选
 ```
 
 当密钥为 `sk-ant-*` 且**任意一层合并后的 `.env` 里都不含** `ANTHROPIC_BASE_URL` 键时，进程会清除环境中的 `ANTHROPIC_BASE_URL`，避免 shell 里为其它工具配置的 OpenRouter 地址把官方 key 发到错误主机。
@@ -362,7 +362,7 @@ ANTHROPIC_MODEL=claude-sonnet-4-20250514   # 可选
 
 ```bash
 OPENROUTER_API_KEY=sk-or-v1-...
-OPENROUTER_MODEL=anthropic/claude-sonnet-4-20250514
+OPENROUTER_MODEL=anthropic/claude-sonnet-4-6
 # 可选自定义 API 根：
 # OPENROUTER_BASE_URL=https://openrouter.ai/api
 ```
@@ -464,13 +464,13 @@ python run_swebench_claude_code.py --resume-from django__django-11099
 python run_swebench_claude_code.py --evaluate
 ```
 
-运行官方 SWE-bench Docker 评测，生成 JSON 报告（如 `claude-sonnet-4-20250514.nano-claw-code-swebench.json`）。
+运行官方 SWE-bench Docker 评测，生成 JSON 报告（如 `claude-sonnet-4-6.nano-claw-code-swebench.json`）。
 
 **第 3 步 — 查看结果：**
 
 ```bash
 # 摘要输出到终端；详细报告在 JSON 文件中
-cat claude-sonnet-4-20250514.nano-claw-code-swebench.json | python -m json.tool
+cat claude-sonnet-4-6.nano-claw-code-swebench.json | python -m json.tool
 ```
 
 ### 配置参数
@@ -479,7 +479,7 @@ cat claude-sonnet-4-20250514.nano-claw-code-swebench.json | python -m json.tool
 |------|------|--------|
 | `--max-instances N` | 限制评测实例数 | 全部 |
 | `--instance-ids FILE` | 指定实例 ID 列表文件 | — |
-| `--model MODEL` | 使用的模型 | `claude-sonnet-4-20250514` |
+| `--model MODEL` | 使用的模型 | `claude-sonnet-4-6` |
 | `--dataset DATASET` | SWE-bench 数据集 | `princeton-nlp/SWE-bench_Lite` |
 | `--split SPLIT` | 数据集切分 | `test` |
 | `--max-turns N` | 每个实例最大 Agent 轮次 | 30 |

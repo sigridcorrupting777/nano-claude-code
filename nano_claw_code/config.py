@@ -35,19 +35,19 @@ SESSIONS_DIR = CONFIG_DIR / "sessions"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 HISTORY_FILE = CONFIG_DIR / "history"
 
-DEFAULT_MODEL = "claude-sonnet-4-20250514"
+DEFAULT_MODEL = "claude-sonnet-4-6"
 DEFAULT_OPENAI_COMPAT_MODEL = "Kimi-K2.5"
 ANTHROPIC_DEFAULT_BASE_URL = "https://api.anthropic.com"
 OPENROUTER_BASE_URL = "https://openrouter.ai/api"
 
 MODELS = [
-    "claude-sonnet-4-20250514",
+    "claude-sonnet-4-6",
     "claude-opus-4-20250514",
     "claude-haiku-3-5-20241022",
 ]
 
 COST_PER_1K = {
-    "claude-sonnet-4-20250514":  {"input": 0.003, "output": 0.015},
+    "claude-sonnet-4-6":  {"input": 0.003, "output": 0.015},
     "claude-opus-4-20250514":    {"input": 0.015, "output": 0.075},
     "claude-haiku-3-5-20241022": {"input": 0.0008, "output": 0.004},
 }

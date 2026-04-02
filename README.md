@@ -81,7 +81,7 @@ cp .env.example .env                # optional; then edit keys (or use exports b
 
 ## Key results
 
-Evaluated on the first 50 instances of SWE-bench Lite using `claude-sonnet-4-20250514`:
+Evaluated on the first 50 instances of SWE-bench Lite using `claude-sonnet-4-6`:
 
 | Variant | Language | Tools | Core Lines | Submitted | Resolved | Resolve Rate |
 |---------|----------|-------|------------|-----------|----------|--------------|
@@ -363,7 +363,7 @@ TOML / `~/.nano_claw/config.json` can also set `model` if you do **not** set any
 
 ```bash
 ANTHROPIC_API_KEY=sk-ant-api03-...
-ANTHROPIC_MODEL=claude-sonnet-4-20250514   # optional
+ANTHROPIC_MODEL=claude-sonnet-4-6   # optional
 ```
 
 If your key is `sk-ant-*` and **`ANTHROPIC_BASE_URL` does not appear in any merged `.env` file**, the CLI clears `ANTHROPIC_BASE_URL` from the process environment so a shell-wide OpenRouter URL does not send official keys to the wrong host.
@@ -372,7 +372,7 @@ If your key is `sk-ant-*` and **`ANTHROPIC_BASE_URL` does not appear in any merg
 
 ```bash
 OPENROUTER_API_KEY=sk-or-v1-...
-OPENROUTER_MODEL=anthropic/claude-sonnet-4-20250514
+OPENROUTER_MODEL=anthropic/claude-sonnet-4-6
 # Optional custom API root:
 # OPENROUTER_BASE_URL=https://openrouter.ai/api
 ```
@@ -474,13 +474,13 @@ Predictions are saved to `results/nano-claw-code/predictions.jsonl` along with f
 python run_swebench_claude_code.py --evaluate
 ```
 
-This runs the official SWE-bench Docker evaluation and produces a JSON report (e.g., `claude-sonnet-4-20250514.nano-claw-code-swebench.json`).
+This runs the official SWE-bench Docker evaluation and produces a JSON report (e.g., `claude-sonnet-4-6.nano-claw-code-swebench.json`).
 
 **Step 3 — View results:**
 
 ```bash
 # Summary is printed to stdout; detailed report in the JSON file
-cat claude-sonnet-4-20250514.nano-claw-code-swebench.json | python -m json.tool
+cat claude-sonnet-4-6.nano-claw-code-swebench.json | python -m json.tool
 ```
 
 ### Configuration
@@ -489,7 +489,7 @@ cat claude-sonnet-4-20250514.nano-claw-code-swebench.json | python -m json.tool
 |------|-------------|---------|
 | `--max-instances N` | Limit number of instances to evaluate | all |
 | `--instance-ids FILE` | Path to a file listing specific instance IDs | — |
-| `--model MODEL` | Model to use | `claude-sonnet-4-20250514` |
+| `--model MODEL` | Model to use | `claude-sonnet-4-6` |
 | `--dataset DATASET` | SWE-bench dataset | `princeton-nlp/SWE-bench_Lite` |
 | `--split SPLIT` | Dataset split | `test` |
 | `--max-turns N` | Max agentic turns per instance | 30 |

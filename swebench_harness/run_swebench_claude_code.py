@@ -20,7 +20,7 @@ Saved per instance (in results/traces/<instance_id>/):
 
 Usage:
     python run_swebench_claude_code.py --max-instances 5
-    python run_swebench_claude_code.py --model claude-sonnet-4-20250514
+    python run_swebench_claude_code.py --model claude-sonnet-4-6
     python run_swebench_claude_code.py --evaluate --predictions results/predictions.jsonl
 
 Environment:
@@ -122,7 +122,7 @@ Instructions:
 class HarnessConfig:
     dataset: str = "princeton-nlp/SWE-bench_Lite"
     split: str = "test"
-    model: str = "claude-sonnet-4-20250514"
+    model: str = "claude-sonnet-4-6"
     max_turns: int = 50
     max_instances: int | None = None
     timeout_per_instance: int = 1800  # 30 minutes
@@ -1080,7 +1080,7 @@ Examples:
   python run_swebench_claude_code.py --max-instances 5
 
   # Full SWE-bench Lite run
-  python run_swebench_claude_code.py --model claude-sonnet-4-20250514
+  python run_swebench_claude_code.py --model claude-sonnet-4-6
 
   # SWE-bench Verified with Opus
   python run_swebench_claude_code.py \\
@@ -1113,8 +1113,8 @@ Per-instance traces are saved to:
     )
     parser.add_argument(
         "--model",
-        default="claude-sonnet-4-20250514",
-        help="Anthropic model to use (default: claude-sonnet-4-20250514)",
+        default="claude-sonnet-4-6",
+        help="Anthropic model to use (default: claude-sonnet-4-6)",
     )
     parser.add_argument(
         "--max-turns",

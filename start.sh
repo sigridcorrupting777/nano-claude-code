@@ -14,7 +14,7 @@
 #
 #   # OR OpenRouter
 #   OPENROUTER_API_KEY=sk-or-xxx
-#   OPENROUTER_MODEL=anthropic/claude-sonnet-4-20250514
+#   OPENROUTER_MODEL=anthropic/claude-sonnet-4-6
 #
 #   # OR generic proxy
 #   ANTHROPIC_API_KEY=your-key

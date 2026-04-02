@@ -66,7 +66,7 @@ def test_e2e_cli_version():
 def test_e2e_stream_json_harness_smoke(tmp_path: Path):
     """run_agent_loop stream-json: model replies without tools."""
     _require_api_key()
-    model = os.environ.get("E2E_MODEL", os.environ.get("MODEL", "claude-sonnet-4-20250514"))
+    model = os.environ.get("E2E_MODEL", os.environ.get("MODEL", "claude-sonnet-4-6"))
     p = _run_cli(
         tmp_path,
         "-p",
@@ -97,7 +97,7 @@ def test_e2e_memory_and_read_tool(tmp_path: Path):
     (tmp_path / "CLAUDE.md").write_text(
         f"# Rules\nThe secret codeword is: {secret}\n", encoding="utf-8"
     )
-    model = os.environ.get("E2E_MODEL", os.environ.get("MODEL", "claude-sonnet-4-20250514"))
+    model = os.environ.get("E2E_MODEL", os.environ.get("MODEL", "claude-sonnet-4-6"))
     p = _run_cli(
         tmp_path,
         "-p",
@@ -133,7 +133,7 @@ def test_e2e_skill_and_agent_project_files(tmp_path: Path):
         "You may only run Bash. Run: echo AGENT_E2E_BASH_MARKER\n",
         encoding="utf-8",
     )
-    model = os.environ.get("E2E_MODEL", os.environ.get("MODEL", "claude-sonnet-4-20250514"))
+    model = os.environ.get("E2E_MODEL", os.environ.get("MODEL", "claude-sonnet-4-6"))
     p = _run_cli(
         tmp_path,
         "-p",
@@ -166,7 +166,7 @@ def test_e2e_skill_and_agent_project_files(tmp_path: Path):
 def test_e2e_print_text_mode_smoke(tmp_path: Path):
     """Non-interactive -p text mode (uses run_streaming; text may be empty if no stream deltas)."""
     _require_api_key()
-    model = os.environ.get("E2E_MODEL", os.environ.get("MODEL", "claude-sonnet-4-20250514"))
+    model = os.environ.get("E2E_MODEL", os.environ.get("MODEL", "claude-sonnet-4-6"))
     p = _run_cli(
         tmp_path,
         "-p",
