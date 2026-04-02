@@ -5,7 +5,7 @@
     <em>蒸馏后的编程智能体 — 更少工具，同等性能，~5,800 行 Python。</em>
   </p>
   <p align="center">
-    <a href="https://github.com/OpenLAIR/dr-claw/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-GPL--3.0%20%2B%20AGPL--3.0-blue?style=for-the-badge" alt="License: GPL-3.0 + AGPL-3.0" /></a>
+    <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License: MIT" /></a>
   </p>
   <p align="center">
     <a href="README.md">English</a> | 中文
@@ -429,6 +429,6 @@ cd swebench_harness && ./run.sh --max-instances 5
 
 ## 许可
 
-本项目采用 **GPL-3.0 + AGPL-3.0** 许可证。详见 [LICENSE](https://github.com/OpenLAIR/dr-claw/blob/main/LICENSE)。
+本项目采用 [MIT 许可证](LICENSE)。
 
-本项目基于 Anthropic 的 [Claude Code](https://github.com/anthropics/claude-code) 构建。
+本仓库为**独立实现的 Python 代码**，**不包含** Anthropic Claude Code 的源码。文中引用 [Claude Code](https://github.com/anthropics/claude-code) 仅表示作为**基准产品**在 SWE-bench 等场景下的对比对象；Anthropic 的软件适用其自有许可证，**不适用于**本仓库代码。
