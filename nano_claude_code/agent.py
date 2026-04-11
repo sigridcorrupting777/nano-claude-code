@@ -8,6 +8,7 @@ interrupt, prompt caching, context compaction, and NDJSON stream-json output.
 
 from __future__ import annotations
 
+import copy
 import json
 import os
 import random
@@ -19,17 +20,44 @@ from typing import Any, Generator
 
 import anthropic
 
-from nano_claw_code.config import calc_cost, resolve_api_env
-from nano_claw_code.permissions import describe_permission, needs_permission
-from nano_claw_code.prompts import build_system_prompt, resolve_model
-from nano_claw_code.stream_json import (
+from nano_claude_code.config import calc_cost, resolve_api_env
+from nano_claude_code.permissions import describe_permission, needs_permission
+from nano_claude_code.prompts import build_system_prompt, resolve_model
+from nano_claude_code.stream_json import (
     api_message_to_stream_message,
     emit_assistant,
     emit_result,
     emit_stream_delta,
     emit_user_tool_results,
 )
-from nano_claw_code.tools_impl import anthropic_tool_defs, dispatch_tool
+from nano_claude_code.tools_impl import anthropic_tool_defs, dispatch_tool
+
+
+def _persist_session_snapshot(
+    session_file: str | None,
+    messages: list[dict[str, Any]],
+    *,
+    turns: int,
+    model_id: str,
+    total_usage: dict[str, int],
+) -> str | None:
+    if not session_file:
+        return None
+    from nano_claude_code.session import save_session
+
+    try:
+        path = save_session(
+            messages,
+            filename=session_file,
+            turn_count=turns,
+            total_input_tokens=int(total_usage.get("input_tokens", 0)),
+            total_output_tokens=int(total_usage.get("output_tokens", 0)),
+            model=model_id,
+        )
+        return path.name
+    except Exception as exc:
+        print(f"[nano-claude-code] session save failed: {exc}", file=sys.stderr)
+        return None
 
 
 # ── Retry configuration ──────────────────────────────────────────────────
@@ -502,6 +530,8 @@ def run_agent_loop(
     streaming: bool = False,
     thinking: bool = False,
     thinking_budget: int = 10_000,
+    initial_messages: list[dict[str, Any]] | None = None,
+    session_file: str | None = None,
 ) -> int:
     """Run the agent loop with stream-json output for the SWE-bench harness."""
     cwd = cwd.resolve()
@@ -518,7 +548,7 @@ def run_agent_loop(
         return 1
 
     if api_env.get("provider") == "openai_compat":
-        from nano_claw_code.openai_compat import run_agent_loop_openai
+        from nano_claude_code.openai_compat import run_agent_loop_openai
 
         return run_agent_loop_openai(
             cwd=cwd,
@@ -530,11 +560,16 @@ def run_agent_loop(
             streaming=streaming,
             thinking=thinking,
             thinking_budget=thinking_budget,
+            initial_messages=initial_messages,
+            session_file=session_file,
         )
 
     api_env.pop("provider", None)
     client = anthropic.Anthropic(**api_env)
-    messages: list[dict[str, Any]] = [{"role": "user", "content": user_prompt}]
+    if initial_messages is not None:
+        messages = copy.deepcopy(initial_messages)
+    else:
+        messages = [{"role": "user", "content": user_prompt}]
     total_usage: dict[str, int] = {
         "input_tokens": 0, "output_tokens": 0,
         "cache_creation_input_tokens": 0, "cache_read_input_tokens": 0,
@@ -604,18 +639,30 @@ def run_agent_loop(
         continuations = 0
 
         if resp.stop_reason == "end_turn" and not tool_uses:
+            messages.append({"role": "assistant",
+                             "content": [c.model_dump(mode="json") for c in resp.content]})
+            nsf = _persist_session_snapshot(
+                session_file, messages, turns=turns, model_id=model_id, total_usage=total_usage,
+            )
             emit_result(subtype="success", is_error=False, num_turns=turns,
                         duration_ms=int((time.time() - t0) * 1000),
                         duration_api_ms=total_api_ms,
-                        result_text=combined_text.strip() or "(no text)", usage=total_usage)
+                        result_text=combined_text.strip() or "(no text)", usage=total_usage,
+                        nano_session_file=nsf)
             return 0
 
         if not tool_uses:
+            messages.append({"role": "assistant",
+                             "content": [c.model_dump(mode="json") for c in resp.content]})
+            nsf = _persist_session_snapshot(
+                session_file, messages, turns=turns, model_id=model_id, total_usage=total_usage,
+            )
             emit_result(subtype="success", is_error=False, num_turns=turns,
                         duration_ms=int((time.time() - t0) * 1000),
                         duration_api_ms=total_api_ms,
                         result_text=combined_text.strip() or "(no tool calls; stopping)",
-                        usage=total_usage)
+                        usage=total_usage,
+                        nano_session_file=nsf)
             return 0
 
         result_blocks: list[dict[str, Any]] = []

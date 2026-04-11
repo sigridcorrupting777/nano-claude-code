@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nano_claw_code.memory import load_memory_context
+from nano_claude_code.memory import load_memory_context
 
 
 def test_memory_layers_order(tmp_path: Path):

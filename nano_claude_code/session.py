@@ -12,7 +12,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from nano_claw_code.config import SESSIONS_DIR, ensure_dirs
+from nano_claude_code.config import SESSIONS_DIR, ensure_dirs
 
 _LATEST_LINK = SESSIONS_DIR / "_latest.json"
 

@@ -100,6 +100,7 @@ def emit_result(
     total_cost_usd: float = 0.0,
     usage: dict[str, Any] | None = None,
     errors: list[str] | None = None,
+    nano_session_file: str | None = None,
 ) -> None:
     usage = usage or {
         "input_tokens": 0,
@@ -107,25 +108,26 @@ def emit_result(
         "cache_creation_input_tokens": 0,
         "cache_read_input_tokens": 0,
     }
-    write_event(
-        {
-            "type": "result",
-            "subtype": subtype,
-            "duration_ms": duration_ms,
-            "duration_api_ms": duration_api_ms,
-            "is_error": is_error,
-            "num_turns": num_turns,
-            "stop_reason": None,
-            "session_id": new_uuid(),
-            "total_cost_usd": total_cost_usd,
-            "usage": usage,
-            "modelUsage": {},
-            "permission_denials": [],
-            "uuid": new_uuid(),
-            **({"result": result_text} if result_text else {}),
-            **({"errors": errors or []} if errors else {}),
-        }
-    )
+    payload: dict[str, Any] = {
+        "type": "result",
+        "subtype": subtype,
+        "duration_ms": duration_ms,
+        "duration_api_ms": duration_api_ms,
+        "is_error": is_error,
+        "num_turns": num_turns,
+        "stop_reason": None,
+        "session_id": new_uuid(),
+        "total_cost_usd": total_cost_usd,
+        "usage": usage,
+        "modelUsage": {},
+        "permission_denials": [],
+        "uuid": new_uuid(),
+        **({"result": result_text} if result_text else {}),
+        **({"errors": errors or []} if errors else {}),
+    }
+    if nano_session_file:
+        payload["nano_session_file"] = nano_session_file
+    write_event(payload)
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Run SWE-bench Lite with nano-claw-code (Python), then evaluate.
+# Run SWE-bench Lite with nano-claude-code (Python), then evaluate.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -21,13 +21,13 @@ fi
 
 REPO_ROOT="$(cd .. && pwd)"
 
-if ! python3 -c "import nano_claw_code" 2>/dev/null; then
+if ! python3 -c "import nano_claude_code" 2>/dev/null; then
     pip install -e "${REPO_ROOT}"
 fi
 
-echo "=== nano-claw-code: Generate predictions ==="
+echo "=== nano-claude-code: Generate predictions ==="
 python run_swebench_claude_code.py "$@"
 
 echo ""
-echo "=== nano-claw-code: Evaluate predictions ==="
+echo "=== nano-claude-code: Evaluate predictions ==="
 python run_swebench_claude_code.py --evaluate

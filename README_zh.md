@@ -1,6 +1,6 @@
 <p align="center">
-  <img src="assets/nanoclaw.png" alt="Nano Claw Code" width="128" height="128">
-  <h1 align="center">Nano-Claw-Code</h1>
+  <img src="assets/nanoclaude.png" alt="Nano Claude Code" width="128" height="128">
+  <h1 align="center">Nano-Claude-Code</h1>
   <p align="center">
     <em>蒸馏后的编程智能体 — 更少工具，同等性能，~5,800 行 Python。</em>
   </p>
@@ -33,7 +33,7 @@
 
 ## 这是什么？
 
-Nano-Claw-Code 是一个从完整版 [Claude Code](https://github.com/anthropics/claude-code) 框架中**系统性蒸馏**出来的轻量级 Python 编程智能体。蒸馏分两步：
+Nano-Claude-Code 是一个从完整版 [Claude Code](https://github.com/anthropics/claude-code) 框架中**系统性蒸馏**出来的轻量级 Python 编程智能体。蒸馏分两步：
 
 1. **TypeScript 裁剪** — 分析 SWE-bench 上的工具使用情况，从原始 Claude Code 中移除 29 个未使用的工具和 4 组服务（~405,500 → ~378,100 核心代码行）。
 2. **Python 重写** — 将核心 Agent 循环、工具实现和 CLI 用纯 Python 重写，把 ~378,100 行 TypeScript 压缩为 **~5,800 行 Python**，同时保留相同的工具调用接口和 Agent 能力。
@@ -41,7 +41,7 @@ Nano-Claw-Code 是一个从完整版 [Claude Code](https://github.com/anthropics
 最终结果在 [SWE-bench Lite](https://www.swebench.com/) 上**达到**完整版 TypeScript Agent 的表现。
 
 <p align="center">
-  <img src="assets/screenshot.png" width="700" alt="Nano-Claw-Code — 终端截图" />
+  <img src="assets/screenshot.png" width="700" alt="Nano-Claude-Code — 终端截图" />
 </p>
 
 ---
@@ -49,11 +49,11 @@ Nano-Claw-Code 是一个从完整版 [Claude Code](https://github.com/anthropics
 ## 快速开始
 
 ```bash
-git clone https://github.com/OpenLAIR/nano-claw-code.git   # 或你的 fork
-cd nano-claw-code
+git clone https://github.com/OpenLAIR/nano-claude-code.git   # 或你的 fork
+cd nano-claude-code
 pip install -e .                    # 或：uv sync && source .venv/bin/activate
 cp .env.example .env                # 可选；编辑密钥（或使用下方 export）
-./start.sh                          # 与安装后的 nano-claw-code 等价
+./start.sh                          # 与安装后的 nano-claude-code 等价
 ```
 
 ---
@@ -61,7 +61,7 @@ cp .env.example .env                # 可选；编辑密钥（或使用下方 ex
 ## 路线图
 
 - [x] 从 Claude Code 蒸馏（42 → 13 工具，TypeScript 裁剪）
-- [x] Python 重写 — nano-claw-code（~5,800 行，12 工具）
+- [x] Python 重写 — nano-claude-code（~5,800 行，12 工具）
 - [x] SWE-bench 评测框架（含完整 trace 日志，已包含在仓库中）
 - [x] SWE-bench Lite 对比评测（50/300 实例）
 - [ ] SWE-bench Lite 全量运行（300 实例）
@@ -78,7 +78,7 @@ cp .env.example .env                # 可选；编辑密钥（或使用下方 ex
 | 版本 | 语言 | 工具数 | 核心代码行数 | 提交 | 解决 | 解决率 |
 |------|------|--------|------------|------|------|--------|
 | **Claude Code**（完整版） | TypeScript | 42 | ~405,500 | 50 | 33 | 66.0% |
-| **Nano-Claw-Code**（本仓库） | Python | 12 | **~5,800** | 50 | 31 | 62.0% |
+| **Nano-Claude-Code**（本仓库） | Python | 12 | **~5,800** | 50 | 31 | 62.0% |
 
 > 代码量减少 ~70 倍，解决率接近。全量测试（300 实例）正在进行中。
 
@@ -166,7 +166,7 @@ cp .env.example .env                # 可选；编辑密钥（或使用下方 ex
 
 ### 3. 多供应商模型支持
 
-原始 Claude Code 仅支持 Anthropic API。Nano-Claw-Code 新增了对**任意 OpenAI 兼容端点**的原生支持，支持使用第三方模型进行评测和部署：
+原始 Claude Code 仅支持 Anthropic API。Nano-Claude-Code 新增了对**任意 OpenAI 兼容端点**的原生支持，支持使用第三方模型进行评测和部署：
 
 <details>
 <summary><b>支持 4 类供应商</b>（点击展开）</summary>
@@ -192,7 +192,7 @@ cp .env.example .env                # 可选；编辑密钥（或使用下方 ex
 
 ```
 ┌─────────────────────┐      prune 29 tools     ┌─────────────────────┐        rewrite in       ┌─────────────────────┐
-│  Claude Code        │ ──────────────────────▶ │  (intermediate)     │ ──────────────────────▶ │  Nano-Claw-Code     │
+│  Claude Code        │ ──────────────────────▶ │  (intermediate)     │ ──────────────────────▶ │  Nano-Claude-Code     │
 │  TypeScript         │     4 service groups    │  TypeScript         │          Python         │  Python             │
 │  ~405,500 lines     │      -27,400 lines      │  ~378,100 lines     │                         │  ~5,800 lines       │
 │  42 tools           │                         │  13 tools           │                         │  12 tools           │
@@ -204,8 +204,8 @@ cp .env.example .env                # 可选；编辑密钥（或使用下方 ex
 ## 仓库结构
 
 ```
-nano-claw-code/
-├── nano_claw_code/            # Agent 源码
+nano-claude-code/
+├── nano_claude_code/            # Agent 源码
 │   ├── cli.py                 #   交互式 REPL、CLI、启动界面（1,639 行）
 │   ├── tools_impl.py          #   12 个核心工具实现（1,066 行）
 │   ├── agent.py               #   Agent 循环、压缩、Prompt 缓存、重试（659 行）
@@ -231,7 +231,7 @@ nano-claw-code/
 ├── pyproject.toml             # Python 包配置
 ├── uv.lock                    # 锁定依赖（供 uv 使用）
 ├── .env.example               # API / 模型环境变量示例
-├── nano-claw.config.toml.example  # TOML 选项示例（[nano_claw]）
+├── nano-claude.config.toml.example  # TOML 选项示例（[nano_claude]）
 └── assets/                    # 截图 & 图片
 ```
 
@@ -261,7 +261,7 @@ uv sync                    # 仅运行时依赖
 uv sync --extra dev        # 额外包含 pytest、ruff（开发）
 ```
 
-会在项目根目录创建 `.venv/`（已加入 `.gitignore`）。可用 `uv run nano-claw-code …`、`uv run pytest`，或激活虚拟环境后照常使用 `./start.sh`。
+会在项目根目录创建 `.venv/`（已加入 `.gitignore`）。可用 `uv run nano-claude-code …`、`uv run pytest`，或激活虚拟环境后照常使用 `./start.sh`。
 
 可选安装 Rich 终端样式：
 
@@ -293,19 +293,19 @@ export MODEL="moonshotai/kimi-k2"
 
 不含密钥的选项（`model`、`max_tokens`、`permission_mode`、`verbose`、`thinking` 等）可写在 TOML 里：
 
-- **用户级：** `~/.nano_claw/config.toml`
-- **项目级：** `.nano_claw/config.toml`（自 git 根目录向当前工作目录合并，更深层目录覆盖外层）
+- **用户级：** `~/.nano_claude/config.toml`
+- **项目级：** `.nano_claude/config.toml`（自 git 根目录向当前工作目录合并，更深层目录覆盖外层）
 
-示例见 [`nano-claw.config.toml.example`](nano-claw.config.toml.example)，配置写在 `[nano_claw]` 段。**API 密钥仍只用 `.env`。** 优先级：环境变量里的 model 相关 → `config.json` → TOML → 内置默认。
+示例见 [`nano-claude.config.toml.example`](nano-claude.config.toml.example)，配置写在 `[nano_claude]` 段。**API 密钥仍只用 `.env`。** 优先级：环境变量里的 model 相关 → `config.json` → TOML → 内置默认。
 
 ### 第 3 步 — 运行
 
-[`start.sh`](start.sh) 与安装后的控制台命令 **`nano-claw-code`** 指向同一入口：
+[`start.sh`](start.sh) 与安装后的控制台命令 **`nano-claude-code`** 指向同一入口：
 
 ```bash
 ./start.sh
 # 等价：
-nano-claw-code
+nano-claude-code
 ```
 
 ### 开发
@@ -347,7 +347,7 @@ E2e / integration 需要 `ANTHROPIC_API_KEY`（`sk-ant-*`），仅 `test_e2e_cli
 | `OPENROUTER_MODEL` | OpenRouter（也可用 `MODEL` 兜底） |
 | `MODEL` | 多路径通用兜底 |
 
-若在 `.env`/shell 里**没有**设置 `MODEL`、`ANTHROPIC_MODEL`、`OPENROUTER_MODEL`、`OPENAI_COMPAT_MODEL` 任一，也可以用 TOML 或 `~/.nano_claw/config.json` 里的 `model`（见上文 **安装 → 可选 — TOML**）。
+若在 `.env`/shell 里**没有**设置 `MODEL`、`ANTHROPIC_MODEL`、`OPENROUTER_MODEL`、`OPENAI_COMPAT_MODEL` 任一，也可以用 TOML 或 `~/.nano_claude/config.json` 里的 `model`（见上文 **安装 → 可选 — TOML**）。
 
 ### Anthropic 直连
 
@@ -395,7 +395,7 @@ MODEL=claude-3-5-sonnet-20241022   # 以代理要求的 id 为准
 
 ### 命令行单次运行
 
-`nano-claw-code -p "..."` 或 `./start.sh` 与交互模式使用同一套环境变量；请在项目目录放置 `.env` 或先 `export`。
+`nano-claude-code -p "..."` 或 `./start.sh` 与交互模式使用同一套环境变量；请在项目目录放置 `.env` 或先 `export`。
 
 ---
 
@@ -405,7 +405,7 @@ MODEL=claude-3-5-sonnet-20241022   # 以代理要求的 id 为准
 
 ```bash
 ./start.sh -p "解释这个代码库"
-# 或：nano-claw-code -p "解释这个代码库"
+# 或：nano-claude-code -p "解释这个代码库"
 ```
 
 第三方模型与代理的配置方式见 [API 服务商接入](#api-服务商接入)。
@@ -419,7 +419,7 @@ MODEL=claude-3-5-sonnet-20241022   # 以代理要求的 id 为准
 ### 前置条件
 
 ```bash
-pip install -e .                          # 安装 nano-claw-code
+pip install -e .                          # 安装 nano-claude-code
 pip install -r swebench_harness/requirements.txt  # 评测依赖（datasets、swebench）
 # 使用 uv 时：
 # uv pip install -e . && uv pip install -r swebench_harness/requirements.txt
@@ -435,7 +435,7 @@ cd swebench_harness
 ```
 
 这条命令会：
-1. 自动安装 `nano-claw-code`（如尚未安装）
+1. 自动安装 `nano-claude-code`（如尚未安装）
 2. 在 SWE-bench Lite 实例上生成预测
 3. 运行 SWE-bench 评测并生成 JSON 报告
 
@@ -456,7 +456,7 @@ python run_swebench_claude_code.py --instance-ids instance_ids_pilot_8.txt
 python run_swebench_claude_code.py --resume-from django__django-11099
 ```
 
-预测结果保存在 `results/nano-claw-code/predictions.jsonl`，完整 trace（工具调用、模型回复、思考过程）保存在 `results/nano-claw-code/traces/`。
+预测结果保存在 `results/nano-claude-code/predictions.jsonl`，完整 trace（工具调用、模型回复、思考过程）保存在 `results/nano-claude-code/traces/`。
 
 **第 2 步 — 评测预测结果：**
 
@@ -464,13 +464,13 @@ python run_swebench_claude_code.py --resume-from django__django-11099
 python run_swebench_claude_code.py --evaluate
 ```
 
-运行官方 SWE-bench Docker 评测，生成 JSON 报告（如 `claude-sonnet-4-6.nano-claw-code-swebench.json`）。
+运行官方 SWE-bench Docker 评测，生成 JSON 报告（如 `claude-sonnet-4-6.nano-claude-code-swebench.json`）。
 
 **第 3 步 — 查看结果：**
 
 ```bash
 # 摘要输出到终端；详细报告在 JSON 文件中
-cat claude-sonnet-4-6.nano-claw-code-swebench.json | python -m json.tool
+cat claude-sonnet-4-6.nano-claude-code-swebench.json | python -m json.tool
 ```
 
 ### 配置参数

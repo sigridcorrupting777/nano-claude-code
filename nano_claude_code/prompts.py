@@ -14,7 +14,7 @@ from typing import Any
 def resolve_model(cli_model: str | None) -> str:
     if cli_model:
         return cli_model
-    from nano_claw_code.config import resolve_model as _resolve
+    from nano_claude_code.config import resolve_model as _resolve
     return _resolve()
 
 
@@ -51,13 +51,13 @@ def _get_git_info(cwd: str) -> str:
 
 
 def _get_claude_md(cwd: str) -> str:
-    from nano_claw_code.memory import load_memory_context
+    from nano_claude_code.memory import load_memory_context
 
     return load_memory_context(cwd)
 
 
 FULL_SYSTEM_PROMPT = """\
-You are Nano Claw Code, an interactive AI coding agent running in the terminal.
+You are Nano Claude Code, an interactive AI coding agent running in the terminal.
 You help users with software engineering tasks: writing code, debugging, refactoring, \
 running tests, and resolving issues in codebases.
 
@@ -116,7 +116,7 @@ skills listed in the skill listing — do not guess skill names.
 """
 
 BARE_SYSTEM_PROMPT = """\
-You are Nano Claw Code, a coding agent.
+You are Nano Claude Code, a coding agent.
 
 CWD: {cwd}
 Date: {date}
@@ -128,7 +128,7 @@ When finished, end with DONE on its own line."""
 
 def _get_agent_listing(cwd: str) -> str:
     try:
-        from nano_claw_code.agents import format_agent_listing
+        from nano_claude_code.agents import format_agent_listing
 
         listing = format_agent_listing(cwd)
         if not listing or listing == "(no agents)":
@@ -145,7 +145,7 @@ def _get_agent_listing(cwd: str) -> str:
 def _get_skill_listing(cwd: str) -> str:
     """Build a skill listing section for the system prompt."""
     try:
-        from nano_claw_code.skills import get_skill_tool_commands, format_skill_listing
+        from nano_claude_code.skills import get_skill_tool_commands, format_skill_listing
         skills = get_skill_tool_commands(cwd)
         if not skills:
             return ""

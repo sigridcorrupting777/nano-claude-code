@@ -6,7 +6,7 @@ from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import MagicMock
 
-from nano_claw_code.agent import AgentState, PermissionRequest, ToolEnd, ToolStart, TurnDone, run_streaming
+from nano_claude_code.agent import AgentState, PermissionRequest, ToolEnd, ToolStart, TurnDone, run_streaming
 
 
 class _FakeStream:

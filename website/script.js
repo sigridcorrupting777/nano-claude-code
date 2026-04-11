@@ -1,5 +1,5 @@
 // ========================================
-// Nano-Claw-Code Website Interactions
+// Nano-Claude-Code Website Interactions
 // ========================================
 
 document.addEventListener('DOMContentLoaded', () => {

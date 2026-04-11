@@ -2,7 +2,7 @@
 
 Custom agents live in:
   ~/.claude/agents/*.md
-  ~/.nano_claw/agents/*.md
+  ~/.nano_claude/agents/*.md
   <project>/.claude/agents/*.md (each ancestor directory from root to cwd, later overrides)
 
 Frontmatter (optional):
@@ -23,8 +23,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
-from nano_claw_code.config import CONFIG_DIR
-from nano_claw_code.frontmatter import (
+from nano_claude_code.config import CONFIG_DIR
+from nano_claude_code.frontmatter import (
     meta_bool,
     meta_int,
     parse_comma_list,
@@ -48,7 +48,7 @@ class AgentDefinition:
 
 
 def _builtin_general() -> AgentDefinition:
-    body = """You are a sub-agent for Nano Claw Code. Complete the delegated task fully using your tools.
+    body = """You are a sub-agent for Nano Claude Code. Complete the delegated task fully using your tools.
 
 Strengths: searching codebases, reading multiple files, multi-step investigation.
 
@@ -202,7 +202,7 @@ def _scan_agents_dir(dir_path: Path) -> dict[str, AgentDefinition]:
 
 
 def discover_agents(cwd: str | None = None) -> dict[str, AgentDefinition]:
-    """Merge built-ins, user, nano_claw, and project agents (later overrides)."""
+    """Merge built-ins, user, nano_claude, and project agents (later overrides)."""
     merged = builtin_agents()
 
     home_agents = Path.home() / ".claude" / "agents"
@@ -212,7 +212,7 @@ def discover_agents(cwd: str | None = None) -> dict[str, AgentDefinition]:
 
     nc = CONFIG_DIR / "agents"
     for k, v in _scan_agents_dir(nc).items():
-        v.source = "nano_claw"
+        v.source = "nano_claude"
         merged[k] = v
 
     start = Path(cwd or os.getcwd()).resolve()

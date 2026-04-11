@@ -3,7 +3,7 @@
 SWE-bench evaluation harness for Claude Code with full trace logging.
 
 Runs SWE-bench Lite or Verified using the Claude Code (Bun/TS) or
-nano-claw-code (Python) agent in non-interactive (-p) mode. For each instance:
+nano-claude-code (Python) agent in non-interactive (-p) mode. For each instance:
   1. Clone the repo at the base commit
   2. Invoke Claude Code with --output-format=stream-json --verbose
   3. Capture every intermediate event (tool calls, results, thinking, etc.)
@@ -59,9 +59,9 @@ CLAUDE_CODE_ENTRYPOINT = CLAUDE_CODE_DIR / "src" / "entrypoints" / "cli.tsx"
 CLAUDE_CODE_PRELOAD = CLAUDE_CODE_DIR / "preload.ts"
 
 
-def is_nano_claw_python(agent_dir: Path) -> bool:
-    """True if agent_dir is the Python nano-claw-code package (not Bun/TS Claude Code)."""
-    return (agent_dir / "nano_claw_code" / "__main__.py").exists() and (
+def is_nano_claude_python(agent_dir: Path) -> bool:
+    """True if agent_dir is the Python nano-claude-code package (not Bun/TS Claude Code)."""
+    return (agent_dir / "nano_claude_code" / "__main__.py").exists() and (
         agent_dir / "pyproject.toml"
     ).exists()
 
@@ -540,7 +540,7 @@ def run_claude_code(
     return returncode, elapsed
 
 
-def run_nano_claw_python(
+def run_nano_claude_python(
     prompt: str,
     workspace: Path,
     config: HarnessConfig,
@@ -548,7 +548,7 @@ def run_nano_claw_python(
     trace_dir: Path,
 ) -> tuple[int, float]:
     """
-    Invoke nano-claw-code (Python) with the same flags and stream-json tracing
+    Invoke nano-claude-code (Python) with the same flags and stream-json tracing
     contract as run_claude_code().
     """
     env = normalize_gateway_env(
@@ -579,7 +579,7 @@ def run_nano_claw_python(
     cmd = [
         sys.executable,
         "-m",
-        "nano_claw_code",
+        "nano_claude_code",
         "-p",
         prompt,
         "--dangerously-skip-permissions",
@@ -659,10 +659,10 @@ def run_agent_framework(
     instance_id: str,
     trace_dir: Path,
 ) -> tuple[int, float]:
-    """Run Bun Claude Code or Python nano-claw-code depending on --claude-code-dir."""
-    if is_nano_claw_python(CLAUDE_CODE_DIR):
-        logger.info("  Agent backend: nano-claw-code (Python)")
-        return run_nano_claw_python(prompt, workspace, config, instance_id, trace_dir)
+    """Run Bun Claude Code or Python nano-claude-code depending on --claude-code-dir."""
+    if is_nano_claude_python(CLAUDE_CODE_DIR):
+        logger.info("  Agent backend: nano-claude-code (Python)")
+        return run_nano_claude_python(prompt, workspace, config, instance_id, trace_dir)
     return run_claude_code(prompt, workspace, config, instance_id, trace_dir)
 
 
@@ -1167,7 +1167,7 @@ Per-instance traces are saved to:
         "--claude-code-dir",
         type=Path,
         default=None,
-        help="Path to agent directory (default: repo root, auto-detected as nano-claw-code).",
+        help="Path to agent directory (default: repo root, auto-detected as nano-claude-code).",
     )
     parser.add_argument(
         "--resume-from",
@@ -1222,13 +1222,13 @@ Per-instance traces are saved to:
             )
             sys.exit(1)
 
-        if is_nano_claw_python(CLAUDE_CODE_DIR):
-            logger.info("Using nano-claw-code (Python); PYTHONPATH=%s", CLAUDE_CODE_DIR)
+        if is_nano_claude_python(CLAUDE_CODE_DIR):
+            logger.info("Using nano-claude-code (Python); PYTHONPATH=%s", CLAUDE_CODE_DIR)
             try:
                 import anthropic  # noqa: F401
             except ImportError:
                 logger.error(
-                    "nano-claw-code needs the anthropic package. Run:\n"
+                    "nano-claude-code needs the anthropic package. Run:\n"
                     "  pip install -e %s",
                     CLAUDE_CODE_DIR,
                 )
@@ -1236,10 +1236,10 @@ Per-instance traces are saved to:
         else:
             if not CLAUDE_CODE_ENTRYPOINT.exists():
                 logger.error(
-                    "Claude Code / nano-claw not found at %s\n"
+                    "Claude Code / nano-claude not found at %s\n"
                     "Expected either:\n"
                     "  start-claude-code/  with src/entrypoints/cli.tsx\n"
-                    "  nano-claw-code/     with nano_claw_code/__main__.py and pyproject.toml",
+                    "  nano-claude-code/     with nano_claude_code/__main__.py and pyproject.toml",
                     CLAUDE_CODE_DIR,
                 )
                 sys.exit(1)

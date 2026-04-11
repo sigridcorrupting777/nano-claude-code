@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nano_claw_code.prompts import build_subagent_system_prompt, build_system_prompt
-from nano_claw_code.agents import resolve_agent
+from nano_claude_code.prompts import build_subagent_system_prompt, build_system_prompt
+from nano_claude_code.agents import resolve_agent
 
 
 def test_build_system_prompt_has_tools_and_cwd(tmp_path: Path):
@@ -14,7 +14,7 @@ def test_build_system_prompt_has_tools_and_cwd(tmp_path: Path):
     (p / "CLAUDE.md").write_text("Use ruff.", encoding="utf-8")
     s = build_system_prompt(cwd=str(p), bare=False)
     assert "Read" in s
-    assert "Nano Claw Code" in s
+    assert "Nano Claude Code" in s
     assert "ruff" in s.lower() or "Use ruff" in s
 
 

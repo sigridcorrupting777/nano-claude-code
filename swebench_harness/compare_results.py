@@ -7,9 +7,9 @@ directories and prints a side-by-side comparison table.
 
 Usage:
     python compare_results.py \
-        --a results/nano-claw-code \
+        --a results/nano-claude-code \
         --b results/start-claude-code \
-        --label-a "nano-claw-code" \
+        --label-a "nano-claude-code" \
         --label-b "start-claude-code"
 """
 from __future__ import annotations
@@ -53,7 +53,7 @@ def load_eval_report(results_dir: Path) -> dict[str, Any]:
                 return data
         except (json.JSONDecodeError, KeyError):
             continue
-    for p in harness_dir.glob("*.nano-claw-code-swebench.json"):
+    for p in harness_dir.glob("*.nano-claude-code-swebench.json"):
         try:
             data = json.loads(p.read_text())
             if "resolved_ids" in data:

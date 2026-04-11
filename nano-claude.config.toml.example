@@ -1,10 +1,10 @@
-# Nano-Claw-Code — optional TOML settings (Codex-style layout).
-# Copy to ~/.nano_claw/config.toml (user-wide) and/or .nano_claw/config.toml (per project).
+# Nano-Claude-Code — optional TOML settings (Codex-style layout).
+# Copy to ~/.nano_claude/config.toml (user-wide) and/or .nano_claude/config.toml (per project).
 #
 # Precedence: .env / environment variables (incl. model*) > config.json > TOML > defaults.
 # Do not put API keys here; use .env instead.
 
-[nano_claw]
+[nano_claude]
 # Default chat model (when MODEL / ANTHROPIC_MODEL / OPENROUTER_MODEL / OPENAI_COMPAT_MODEL unset)
 model = "claude-sonnet-4-6"
 

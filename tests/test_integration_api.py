@@ -6,7 +6,7 @@ import os
 
 import pytest
 
-from nano_claw_code.config import load_dotenv, resolve_api_env, resolve_model
+from nano_claude_code.config import load_dotenv, resolve_api_env, resolve_model
 
 pytestmark = pytest.mark.integration
 
@@ -48,7 +48,7 @@ def test_messages_create_minimal(require_key):
 
 def test_dispatch_agent_explore(require_key, tmp_path):
     """Sub-agent Explore + Bash (uses API + tool loop)."""
-    from nano_claw_code.tools_impl import dispatch_tool
+    from nano_claude_code.tools_impl import dispatch_tool
 
     (tmp_path / ".git").mkdir()  # optional
     out = dispatch_tool(

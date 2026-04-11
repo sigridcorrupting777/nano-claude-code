@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from nano_claw_code.tools_impl import (
+from nano_claude_code.tools_impl import (
     TOOL_DISPATCH,
     anthropic_tool_defs,
     dispatch_tool,

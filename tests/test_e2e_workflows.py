@@ -23,7 +23,7 @@ def _run_cli(cwd: Path, *args: str, env: dict | None = None) -> subprocess.Compl
     env = {**os.environ, **(env or {})}
     env.setdefault("PYTHONPATH", str(PROJECT_ROOT))
     return subprocess.run(
-        [sys.executable, "-m", "nano_claw_code", *args],
+        [sys.executable, "-m", "nano_claude_code", *args],
         cwd=str(cwd),
         capture_output=True,
         text=True,
@@ -58,7 +58,7 @@ def _skip_if_subprocess_quota(p: subprocess.CompletedProcess, *, what: str) -> N
 def test_e2e_cli_version():
     p = _run_cli(PROJECT_ROOT, "--version")
     assert p.returncode == 0
-    assert "nano-claw-code" in p.stdout.lower() or "0." in p.stdout
+    assert "nano-claude-code" in p.stdout.lower() or "0." in p.stdout
 
 
 @pytest.mark.e2e

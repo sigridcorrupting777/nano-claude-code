@@ -17,7 +17,7 @@ import time
 from pathlib import Path
 from typing import Any
 
-from nano_claw_code.agent import (
+from nano_claude_code.agent import (
     AgentState,
     CompactionNotice,
     PermissionRequest,
@@ -29,7 +29,7 @@ from nano_claw_code.agent import (
     run_agent_loop,
     run_streaming,
 )
-from nano_claw_code.config import (
+from nano_claude_code.config import (
     HISTORY_FILE,
     MODELS,
     PERMISSION_MODES,
@@ -40,9 +40,9 @@ from nano_claw_code.config import (
     resolve_api_env,
     save_config,
 )
-from nano_claw_code.permissions import describe_permission, needs_permission
-from nano_claw_code.prompts import build_system_prompt, resolve_model
-from nano_claw_code.session import (
+from nano_claude_code.permissions import describe_permission, needs_permission
+from nano_claude_code.prompts import build_system_prompt, resolve_model
+from nano_claude_code.session import (
     auto_save_session,
     list_sessions,
     list_sessions_with_info,
@@ -52,14 +52,14 @@ from nano_claw_code.session import (
     save_session,
     search_sessions,
 )
-from nano_claw_code.agents import clear_agent_cache, get_agents, tools_summary
-from nano_claw_code.skills import (
+from nano_claude_code.agents import clear_agent_cache, get_agents, tools_summary
+from nano_claude_code.skills import (
     clear_skill_cache,
     format_skill_listing,
     get_skills,
     get_user_invocable_skills,
 )
-from nano_claw_code.tools_impl import anthropic_tool_defs, get_todos
+from nano_claude_code.tools_impl import anthropic_tool_defs, get_todos
 
 
 # ── Optional rich rendering ───────────────────────────────────────────────
@@ -353,7 +353,7 @@ def _cmd_export(args: str, state: AgentState, _config: dict) -> bool:
         _info("Nothing to export (empty conversation).")
         return True
     filename = args.strip() or f"conversation_{int(__import__('time').time())}.md"
-    lines: list[str] = ["# Nano Claw Code — Conversation Export\n"]
+    lines: list[str] = ["# Nano Claude Code — Conversation Export\n"]
     for m in state.messages:
         role = m.get("role", "unknown").upper()
         content = m.get("content", "")
@@ -523,11 +523,11 @@ def _cmd_diff(_args: str, _state: AgentState, _config: dict) -> bool:
 
 def _cmd_status(_args: str, _state: AgentState, config: dict) -> bool:
     """Show version, model, provider, and environment info."""
-    from nano_claw_code import __version__
+    from nano_claude_code import __version__
     api_env = resolve_api_env(config.get("api_key"))
     provider = api_env.get("provider", "unknown")
 
-    print(_clr("\n  Nano Claw Code Status", "bold"))
+    print(_clr("\n  Nano Claude Code Status", "bold"))
     print(f"    Version:      v{__version__}")
     print(f"    Python:       {sys.version.split()[0]}")
     print(f"    Provider:     {provider}")
@@ -555,7 +555,7 @@ def _cmd_status(_args: str, _state: AgentState, config: dict) -> bool:
 
 
 def _find_dotenv_files_for_display() -> list[str]:
-    from nano_claw_code.config import _find_dotenv_files
+    from nano_claude_code.config import _find_dotenv_files
     return [str(p) for p in _find_dotenv_files()]
 
 
@@ -636,12 +636,12 @@ def _cmd_init(_args: str, _state: AgentState, _config: dict) -> bool:
 def _cmd_doctor(_args: str, _state: AgentState, config: dict) -> bool:
     """Diagnose installation, environment, and API connectivity."""
     import subprocess
-    from nano_claw_code import __version__
+    from nano_claude_code import __version__
 
     print(_clr("\n  Doctor — Diagnostics", "bold"))
 
     print(f"\n  {_clr('Package', 'bold')}")
-    print(f"    nano-claw-code v{__version__}")
+    print(f"    nano-claude-code v{__version__}")
     print(f"    Python {sys.version.split()[0]}")
     print(f"    Platform: {sys.platform}")
 
@@ -663,7 +663,7 @@ def _cmd_doctor(_args: str, _state: AgentState, config: dict) -> bool:
     print(f"    API key:  {'set' if has_key else _clr('NOT SET', 'red')}")
     print(f"    Base URL: {api_env.get('base_url', '(default)')}")
 
-    from nano_claw_code.config import _find_dotenv_files
+    from nano_claude_code.config import _find_dotenv_files
     dotenv_files = _find_dotenv_files()
     if dotenv_files:
         print(f"    .env files: {', '.join(str(p) for p in dotenv_files)}")
@@ -732,7 +732,7 @@ def _cmd_btw(args: str, state: AgentState, config: dict) -> bool:
     client = anth.Anthropic(**api_env)
     model = config["model"]
 
-    from nano_claw_code.prompts import build_system_prompt
+    from nano_claude_code.prompts import build_system_prompt
     system = build_system_prompt(cwd=str(Path.cwd()), bare=True)
     tools = anthropic_tool_defs()
 
@@ -768,7 +768,7 @@ def _cmd_btw(args: str, state: AgentState, config: dict) -> bool:
         sub_msgs.append({"role": "assistant", "content": resp.content})
         tool_results = []
         for tu in tool_uses:
-            from nano_claw_code.tools_impl import dispatch_tool
+            from nano_claude_code.tools_impl import dispatch_tool
             raw_in = tu.input if isinstance(tu.input, dict) else json.loads(tu.input)
             print(_clr(f"  [{_tool_desc(tu.name, raw_in)}]", "dim"))
             result = dispatch_tool(Path.cwd(), tu.name, raw_in)
@@ -967,7 +967,7 @@ def _handle_slash(line: str, state: AgentState, config: dict) -> bool | str:
     skills = get_skills()
     skill = skills.get(cmd)
     if skill and skill.get("user_invocable", True):
-        from nano_claw_code.skills import expand_skill_prompt
+        from nano_claude_code.skills import expand_skill_prompt
         prompt = expand_skill_prompt(skill, args)
         _info(f"[skill: /{cmd}]")
         return prompt
@@ -1012,8 +1012,8 @@ _CMD_META: dict[str, tuple[str, str]] = {
     "copy":        ("Misc",       "Copy last response to clipboard"),
     "bug":         ("Misc",       "Report a bug / feedback"),
     "feedback":    ("Misc",       "Alias for /bug"),
-    "exit":        ("Misc",       "Exit nano-claw-code"),
-    "quit":        ("Misc",       "Exit nano-claw-code"),
+    "exit":        ("Misc",       "Exit nano-claude-code"),
+    "quit":        ("Misc",       "Exit nano-claude-code"),
 }
 
 _ARG_COMPLETIONS: dict[str, list[str]] = {
@@ -1124,7 +1124,7 @@ def _setup_readline() -> None:
 
 # ── Interactive REPL ──────────────────────────────────────────────────────
 
-MASCOT_CONFIG_PATH = Path.home() / ".config" / "nano-claw-code" / "mascot"
+MASCOT_CONFIG_PATH = Path.home() / ".config" / "nano-claude-code" / "mascot"
 
 MASCOT_NAMES = ["duck", "cat", "bunny", "frog", "penguin"]
 
@@ -1252,7 +1252,7 @@ def _print_banner(provider: str, provider_label: str, model: str, perm_mode: str
     art_rows = _get_mascot_art()[mascot]
 
     info_lines = [
-        ("nano claw code", f"{g1}{b}nano claw code{r}"),
+        ("nano claude code", f"{g1}{b}nano claude code{r}"),
         ("✦ Nano AI Coding Agent ✦", f"{g1}✦ Nano AI Coding Agent ✦{r}"),
         (f"Provider     {provider}", f"{wh}Provider{r}     {provider_label}"),
         (f"Model        {model}", f"{wh}Model{r}        {cy}{b}{model}{r}"),
@@ -1441,7 +1441,7 @@ def run_repl(config: dict, resume_state: dict | None = None) -> int:
         interrupted = False
         try:
             if openai_client is not None:
-                from nano_claw_code.openai_compat import run_streaming_openai
+                from nano_claude_code.openai_compat import run_streaming_openai
 
                 event_iter = run_streaming_openai(
                     user_input, state,
@@ -1521,7 +1521,7 @@ def run_repl(config: dict, resume_state: dict | None = None) -> int:
 
         # Auto-generate session title on first real interaction
         if not config.get("_session_title") and state.messages:
-            from nano_claw_code.session import generate_session_title
+            from nano_claude_code.session import generate_session_title
             title = generate_session_title(state.messages)
             if title and title != "(untitled session)":
                 config["_session_title"] = title
@@ -1562,7 +1562,7 @@ def _run_print_text(prompt: str, config: dict, max_turns: int = 50) -> int:
     system_prompt = build_system_prompt(cwd=str(Path.cwd()), bare=config.get("bare", False))
 
     if openai_client is not None:
-        from nano_claw_code.openai_compat import run_streaming_openai
+        from nano_claude_code.openai_compat import run_streaming_openai
 
         event_iter = run_streaming_openai(
             prompt, state,
@@ -1603,8 +1603,8 @@ def _run_print_text(prompt: str, config: dict, max_turns: int = 50) -> int:
 
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="nano-claw-code",
-        description="Nano Claw Code — Python coding agent (ported from nano-claude-code)",
+        prog="nano-claude-code",
+        description="Nano Claude Code — Python coding agent (ported from nano-claude-code)",
         add_help=True,
     )
     p.add_argument("prompt", nargs="*", help="Initial prompt (positional, for scripting)")
@@ -1632,6 +1632,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="Permission mode: auto, accept-all, manual")
     p.add_argument("--resume", nargs="?", const="latest", default=None,
                    help="Resume a previous session. Use --resume for latest, or --resume <filename>")
+    p.add_argument("--session-file", default=None,
+                   help="Persist harness/json conversation to this filename under the sessions directory")
     p.add_argument("-n", "--name", default=None,
                    help="Set a display name/title for this session (shown in /load)")
     p.add_argument("--version", action="store_true", help="Print version and exit")
@@ -1668,8 +1670,8 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
 
     if args.version:
-        from nano_claw_code import __version__
-        print(f"nano-claw-code v{__version__}")
+        from nano_claude_code import __version__
+        print(f"nano-claude-code v{__version__}")
         return 0
 
     config = load_config()
@@ -1698,19 +1700,36 @@ def main(argv: list[str] | None = None) -> int:
         prompt = " ".join(args.prompt)
 
     if prompt:
+        initial_messages = None
+        if args.resume and args.output_format in ("stream-json", "json"):
+            resume_state = _load_resume_session(args.resume)
+            if resume_state is None:
+                _err("No session found to resume.")
+                return 1
+            initial_messages = list(resume_state.get("messages", []))
+            initial_messages.append({"role": "user", "content": prompt})
+        elif args.resume:
+            _err("--resume with -p/--print only supports --output-format json or stream-json.")
+            return 1
+
+        uprompt = prompt if initial_messages is None else ""
         if args.output_format == "stream-json":
             return run_agent_loop(
-                cwd=Path(os.getcwd()), user_prompt=prompt, model=args.model,
+                cwd=Path(os.getcwd()), user_prompt=uprompt, model=args.model,
                 max_turns=args.max_turns, bare=args.bare, verbose=args.verbose,
                 streaming=args.streaming, thinking=args.thinking,
                 thinking_budget=args.thinking_budget,
+                initial_messages=initial_messages,
+                session_file=args.session_file,
             )
         elif args.output_format == "json":
             return run_agent_loop(
-                cwd=Path(os.getcwd()), user_prompt=prompt, model=args.model,
+                cwd=Path(os.getcwd()), user_prompt=uprompt, model=args.model,
                 max_turns=args.max_turns, bare=args.bare, verbose=args.verbose,
                 streaming=args.streaming, thinking=args.thinking,
                 thinking_budget=args.thinking_budget,
+                initial_messages=initial_messages,
+                session_file=args.session_file,
             )
         else:
             return _run_print_text(prompt, config, max_turns=args.max_turns)

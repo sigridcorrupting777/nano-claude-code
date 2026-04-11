@@ -5,6 +5,7 @@ Env: OPENAI_COMPAT_BASE_URL, OPENAI_COMPAT_API_KEY, OPENAI_COMPAT_MODEL
 
 from __future__ import annotations
 
+import copy
 import json
 import random
 import sys
@@ -15,17 +16,17 @@ from typing import Any, Generator
 
 from openai import APIConnectionError, APIError, OpenAI, RateLimitError
 
-from nano_claw_code.permissions import describe_permission, needs_permission
-from nano_claw_code.prompts import build_system_prompt
-from nano_claw_code.stream_json import (
+from nano_claude_code.permissions import describe_permission, needs_permission
+from nano_claude_code.prompts import build_system_prompt
+from nano_claude_code.stream_json import (
     api_message_to_stream_message,
     emit_assistant,
     emit_result,
     emit_user_tool_results,
 )
-from nano_claw_code.tools_impl import anthropic_tool_defs, dispatch_tool
+from nano_claude_code.tools_impl import anthropic_tool_defs, dispatch_tool
 
-from nano_claw_code.agent import (
+from nano_claude_code.agent import (
     AgentState,
     CompactionNotice,
     MAX_CONTINUATIONS,
@@ -35,6 +36,7 @@ from nano_claw_code.agent import (
     ToolStart,
     TurnDone,
     _needs_compaction,
+    _persist_session_snapshot,
 )
 
 # ── Retry (mirror agent.py) ─────────────────────────────────────────────
@@ -93,7 +95,7 @@ def anthropic_tools_to_openai(tools: list[dict[str, Any]]) -> list[dict[str, Any
 def _messages_to_openai_chat(
     system_prompt: str, messages: list[dict[str, Any]]
 ) -> list[dict[str, Any]]:
-    """Build OpenAI `messages` from Nano Claw dict-shaped history."""
+    """Build OpenAI `messages` from Nano Claude dict-shaped history."""
     oai: list[dict[str, Any]] = [{"role": "system", "content": system_prompt}]
     for m in messages:
         role = m.get("role", "user")
@@ -439,8 +441,10 @@ def run_agent_loop_openai(
     streaming: bool = False,
     thinking: bool = False,
     thinking_budget: int = 10_000,
+    initial_messages: list[dict[str, Any]] | None = None,
+    session_file: str | None = None,
 ) -> int:
-    from nano_claw_code.prompts import resolve_model as _resolve_model
+    from nano_claude_code.prompts import resolve_model as _resolve_model
 
     del verbose, streaming, thinking, thinking_budget
     cwd = cwd.resolve()
@@ -449,7 +453,7 @@ def run_agent_loop_openai(
     tools = anthropic_tool_defs()
     oai_tools = anthropic_tools_to_openai(tools)
 
-    from nano_claw_code.config import resolve_api_env
+    from nano_claude_code.config import resolve_api_env
 
     api_env = resolve_api_env()
     if not api_env.get("api_key") or api_env.get("provider") != "openai_compat":
@@ -463,7 +467,10 @@ def run_agent_loop_openai(
         return 1
 
     client = OpenAI(api_key=api_env["api_key"], base_url=api_env["base_url"])
-    messages: list[dict[str, Any]] = [{"role": "user", "content": user_prompt}]
+    if initial_messages is not None:
+        messages = copy.deepcopy(initial_messages)
+    else:
+        messages = [{"role": "user", "content": user_prompt}]
     total_usage: dict[str, int] = {
         "input_tokens": 0,
         "output_tokens": 0,
@@ -545,6 +552,10 @@ def run_agent_loop_openai(
         continuations = 0
 
         if choice.finish_reason != "tool_calls" and not tool_uses:
+            messages.append({"role": "assistant", "content": blocks})
+            nsf = _persist_session_snapshot(
+                session_file, messages, turns=turns, model_id=model_id, total_usage=total_usage,
+            )
             emit_result(
                 subtype="success",
                 is_error=False,
@@ -553,10 +564,15 @@ def run_agent_loop_openai(
                 duration_api_ms=total_api_ms,
                 result_text=combined_text.strip() or "(no text)",
                 usage=total_usage,
+                nano_session_file=nsf,
             )
             return 0
 
         if not tool_uses:
+            messages.append({"role": "assistant", "content": blocks})
+            nsf = _persist_session_snapshot(
+                session_file, messages, turns=turns, model_id=model_id, total_usage=total_usage,
+            )
             emit_result(
                 subtype="success",
                 is_error=False,
@@ -565,6 +581,7 @@ def run_agent_loop_openai(
                 duration_api_ms=total_api_ms,
                 result_text=combined_text.strip() or "(no tool calls; stopping)",
                 usage=total_usage,
+                nano_session_file=nsf,
             )
             return 0
 

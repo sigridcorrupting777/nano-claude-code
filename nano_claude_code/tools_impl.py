@@ -501,7 +501,7 @@ def tool_webfetch(cwd: Path, inp: dict) -> str:
     try:
         r = httpx.get(
             url,
-            headers={"User-Agent": "NanoClawCode/0.2"},
+            headers={"User-Agent": "NanoClaudeCode/0.2"},
             timeout=30,
             follow_redirects=True,
         )
@@ -566,7 +566,7 @@ def tool_websearch(cwd: Path, inp: dict) -> str:
         r = httpx.get(
             "https://html.duckduckgo.com/html/",
             params={"q": query},
-            headers={"User-Agent": "Mozilla/5.0 (compatible; NanoClawCode/0.2)"},
+            headers={"User-Agent": "Mozilla/5.0 (compatible; NanoClaudeCode/0.2)"},
             timeout=30,
             follow_redirects=True,
         )
@@ -723,9 +723,9 @@ def tool_agent(cwd: Path, inp: dict) -> str:
     description = inp.get("description", "Sub-agent task")
     subagent_type = inp.get("subagent_type") or inp.get("subagent-type")
 
-    from nano_claw_code.agents import filter_tools_for_agent, resolve_agent
-    from nano_claw_code.config import resolve_api_env
-    from nano_claw_code.prompts import build_subagent_system_prompt, resolve_model
+    from nano_claude_code.agents import filter_tools_for_agent, resolve_agent
+    from nano_claude_code.config import resolve_api_env
+    from nano_claude_code.prompts import build_subagent_system_prompt, resolve_model
     import anthropic as anth
 
     ag = resolve_agent(subagent_type, str(cwd))
@@ -797,7 +797,7 @@ def tool_agent(cwd: Path, inp: dict) -> str:
 
 def tool_skill(cwd: Path, inp: dict) -> str:
     """Execute a discovered skill by name, with optional arguments."""
-    from nano_claw_code.skills import (
+    from nano_claude_code.skills import (
         get_skills, expand_skill_prompt, execute_skill_forked,
     )
     skill_name = (inp.get("skill") or "").strip().lstrip("/").lower()

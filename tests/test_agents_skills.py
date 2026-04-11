@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nano_claw_code.agents import (
+from nano_claude_code.agents import (
     AgentDefinition,
     builtin_agents,
     discover_agents,
@@ -12,7 +12,7 @@ from nano_claw_code.agents import (
     resolve_agent,
     tools_summary,
 )
-from nano_claw_code.skills import discover_skills, expand_skill_prompt
+from nano_claude_code.skills import discover_skills, expand_skill_prompt
 
 
 def test_builtin_agents_keys():

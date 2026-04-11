@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Load project .env (same rules as nano_claw_code.config.load_dotenv) and run pytest.
+"""Load project .env (same rules as nano_claude_code.config.load_dotenv) and run pytest.
 
-Usage (from nano-claw-code/):
+Usage (from nano-claude-code/):
   python scripts/run_pytest_with_dotenv.py
   python scripts/run_pytest_with_dotenv.py tests/test_tools_impl.py -q
 
@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> int:
     os.chdir(ROOT)
     sys.path.insert(0, str(ROOT))
-    from nano_claw_code.config import load_dotenv
+    from nano_claude_code.config import load_dotenv
 
     for k, v in load_dotenv().items():
         if v is not None and k:

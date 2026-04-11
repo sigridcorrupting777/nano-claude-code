@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from nano_claw_code.session import (
+from nano_claude_code.session import (
     generate_session_title,
     load_session,
     rename_session,

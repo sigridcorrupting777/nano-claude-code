@@ -3,7 +3,7 @@ requires = ["setuptools>=61"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "nano-claw-code"
+name = "nano-claude-code"
 version = "0.2.0"
 description = "Python coding agent converted from nano-claude-code (TypeScript), with Claude Code-compatible tools and stream-json protocol"
 readme = "README.md"
@@ -18,7 +18,7 @@ dependencies = [
 ]
 
 [project.scripts]
-nano-claw-code = "nano_claw_code.cli:main"
+nano-claude-code = "nano_claude_code.cli:main"
 
 [project.optional-dependencies]
 dev = ["ruff>=0.6.0", "pytest>=8.0"]
@@ -26,7 +26,7 @@ rich = ["rich>=13.0.0"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["nano_claw_code*"]
+include = ["nano_claude_code*"]
 
 [tool.ruff]
 line-length = 100

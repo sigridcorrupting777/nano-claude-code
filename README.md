@@ -1,15 +1,15 @@
 <p align="center">
-  <img src="assets/nanoclaw.png" alt="Nano Claw Code" width="128" height="128">
+  <img src="assets/nanoclaude.png" alt="Nano Claude Code" width="128" height="128">
   <h1 align="center">Nano-Claude-Code</h1>
   <p align="center">
     <em>A distilled and optimized coding agent in ~5,800 lines of Python — less code, same performance.</em>
   </p>
   <p align="center">
-    <a href="https://openlair.github.io/nano-claw-code">
+    <a href="https://openlair.github.io/nano-claude-code">
       <img src="https://img.shields.io/badge/%F0%9F%8C%90-Homepage-CB2B3E?style=for-the-badge" alt="Homepage" />
     </a>
-    <a href="https://github.com/OpenLAIR/nano-claw-code">
-      <img src="https://img.shields.io/badge/%F0%9F%A6%9E-Nano--Claw--Code-CB2B3E?style=for-the-badge" alt="Nano-Claw-Code" />
+    <a href="https://github.com/OpenLAIR/nano-claude-code">
+      <img src="https://img.shields.io/badge/%F0%9F%A6%9E-Nano--Claude--Code-CB2B3E?style=for-the-badge" alt="Nano-Claude-Code" />
     </a>
   </p>
   <p align="center">
@@ -41,7 +41,7 @@
 
 ## What is this?
 
-Nano-Claw-Code is a **lightweight Python coding agent** distilled from the full [Claude Code](https://github.com/anthropics/claude-code) framework. The distillation follows a two-stage pipeline:
+Nano-Claude-Code is a **lightweight Python coding agent** distilled from the full [Claude Code](https://github.com/anthropics/claude-code) framework. The distillation follows a two-stage pipeline:
 
 1. **TypeScript pruning** — We analyzed tool usage on SWE-bench and removed 29 unused tools and 4 service groups from the original Claude Code (~405,500 → ~378,100 core lines).
 2. **Python re-implementation** — We then rewrote the core agent loop, tools, and CLI in pure Python, compressing ~378,100 lines of TypeScript into **~5,800 lines of Python** while preserving the same tool-use interface and agentic capabilities.
@@ -49,7 +49,7 @@ Nano-Claw-Code is a **lightweight Python coding agent** distilled from the full 
 We provide code for result evaluation on [SWE-bench Lite](https://www.swebench.com/).
 
 <p align="center">
-  <img src="assets/screenshot.png" width="700" alt="Nano-Claw-Code — CLI screenshot" />
+  <img src="assets/screenshot.png" width="700" alt="Nano-Claude-Code — CLI screenshot" />
 </p>
 
 ---
@@ -57,11 +57,11 @@ We provide code for result evaluation on [SWE-bench Lite](https://www.swebench.c
 ## Quick start
 
 ```bash
-git clone https://github.com/OpenLAIR/nano-claw-code.git   # or your fork
-cd nano-claw-code
+git clone https://github.com/OpenLAIR/nano-claude-code.git   # or your fork
+cd nano-claude-code
 pip install -e .                    # or: uv sync && source .venv/bin/activate
 cp .env.example .env                # optional; then edit keys (or use exports below)
-./start.sh                          # same as: nano-claw-code (after install)
+./start.sh                          # same as: nano-claude-code (after install)
 ```
 
 ---
@@ -69,7 +69,7 @@ cp .env.example .env                # optional; then edit keys (or use exports b
 ## Roadmap
 
 - [x] Distill Claude Code (42 → 13 tools, TypeScript pruning)
-- [x] Python re-implementation — nano-claw-code (~5,800 lines, 12 tools)
+- [x] Python re-implementation — nano-claude-code (~5,800 lines, 12 tools)
 - [x] SWE-bench evaluation harness with full trace logging (included in repo)
 - [x] Comparative evaluation on SWE-bench Lite (50/300 instances)
 - [ ] Full SWE-bench Lite run (300 instances)
@@ -86,7 +86,7 @@ Evaluated on the first 50 instances of SWE-bench Lite using `claude-sonnet-4-6`:
 | Variant | Language | Tools | Core Lines | Submitted | Resolved | Resolve Rate |
 |---------|----------|-------|------------|-----------|----------|--------------|
 | **Claude Code** (full) | TypeScript | 42 | ~405,500 | 50 | 33 | 66.0% |
-| **Nano-Claw-Code** (this repo) | Python | 12 | **~5,800** | 50 | 31 | 62.0% |
+| **Nano-Claude-Code** (this repo) | Python | 12 | **~5,800** | 50 | 31 | 62.0% |
 
 > ~70x less code, comparable resolve rate. Full benchmark runs (300 instances) are in progress.
 
@@ -174,7 +174,7 @@ Beyond tools, the agent preserves key infrastructure:
 
 ### 3. Multi-Provider Model Support
 
-The original Claude Code is locked to Anthropic's API. Nano-Claw-Code adds first-class support for **any OpenAI-compatible endpoint**, enabling evaluation and deployment with third-party models:
+The original Claude Code is locked to Anthropic's API. Nano-Claude-Code adds first-class support for **any OpenAI-compatible endpoint**, enabling evaluation and deployment with third-party models:
 
 <details>
 <summary><b>4 provider tiers supported</b> (click to expand)</summary>
@@ -200,7 +200,7 @@ Both variants are evaluated under identical conditions with full trace logging �
 
 ```
 ┌─────────────────────┐      prune 29 tools     ┌─────────────────────┐        rewrite in       ┌─────────────────────┐
-│  Claude Code        │ ──────────────────────▶ │  (intermediate)     │ ──────────────────────▶ │  Nano-Claw-Code     │
+│  Claude Code        │ ──────────────────────▶ │  (intermediate)     │ ──────────────────────▶ │  Nano-Claude-Code     │
 │  TypeScript         │     4 service groups    │  TypeScript         │          Python         │  Python             │
 │  ~405,500 lines     │      -27,400 lines      │  ~378,100 lines     │                         │  ~5,800 lines       │
 │  42 tools           │                         │  13 tools           │                         │  12 tools           │
@@ -214,8 +214,8 @@ Both variants are evaluated under identical conditions with full trace logging �
 Line counts below are approximate snapshots and may drift as the code evolves.
 
 ```
-nano-claw-code/
-├── nano_claw_code/            # Agent source code
+nano-claude-code/
+├── nano_claude_code/            # Agent source code
 │   ├── cli.py                 #   Interactive REPL, CLI, startup banner (1,639 lines)
 │   ├── tools_impl.py          #   12 core tool implementations (1,066 lines)
 │   ├── agent.py               #   Agent loop, compaction, prompt caching, retry (659 lines)
@@ -241,7 +241,7 @@ nano-claw-code/
 ├── pyproject.toml             # Python package config
 ├── uv.lock                    # Locked deps (for uv)
 ├── .env.example               # Example API / model env vars
-├── nano-claw.config.toml.example  # Example TOML options ([nano_claw])
+├── nano-claude.config.toml.example  # Example TOML options ([nano_claude])
 └── assets/                    # Screenshots & images
 ```
 
@@ -271,7 +271,7 @@ uv sync                    # runtime dependencies only
 uv sync --extra dev        # + pytest and ruff (for development)
 ```
 
-This creates `.venv/` at the repo root (gitignored). Use `uv run nano-claw-code …`, `uv run pytest`, or activate `.venv` and run `./start.sh` as usual.
+This creates `.venv/` at the repo root (gitignored). Use `uv run nano-claude-code …`, `uv run pytest`, or activate `.venv` and run `./start.sh` as usual.
 
 Optional Rich-based terminal styling:
 
@@ -303,19 +303,19 @@ export MODEL="moonshotai/kimi-k2"
 
 Non-secret options (`model`, `max_tokens`, `permission_mode`, `verbose`, `thinking`, …) can live in TOML:
 
-- **User:** `~/.nano_claw/config.toml`
-- **Project:** `.nano_claw/config.toml` (from git root toward cwd; inner directories win)
+- **User:** `~/.nano_claude/config.toml`
+- **Project:** `.nano_claude/config.toml` (from git root toward cwd; inner directories win)
 
-See [`nano-claw.config.toml.example`](nano-claw.config.toml.example). Keys go under `[nano_claw]`. API keys stay in `.env` only. Precedence: env model vars → `config.json` → TOML → defaults.
+See [`nano-claude.config.toml.example`](nano-claude.config.toml.example). Keys go under `[nano_claude]`. API keys stay in `.env` only. Precedence: env model vars → `config.json` → TOML → defaults.
 
 ### Step 3 — Run
 
-[`start.sh`](start.sh) forwards to the same entry point as the **`nano-claw-code`** console script after install:
+[`start.sh`](start.sh) forwards to the same entry point as the **`nano-claude-code`** console script after install:
 
 ```bash
 ./start.sh
 # equivalent:
-nano-claw-code
+nano-claude-code
 ```
 
 ### Development
@@ -357,7 +357,7 @@ The client picks a backend using the **first match** below (highest priority fir
 | `OPENROUTER_MODEL` | OpenRouter (fallback: `MODEL`) |
 | `MODEL` | Generic fallback for several paths |
 
-TOML / `~/.nano_claw/config.json` can also set `model` if you do **not** set any of `MODEL`, `ANTHROPIC_MODEL`, `OPENROUTER_MODEL`, or `OPENAI_COMPAT_MODEL` in `.env`/shell (see **Setup → Optional — TOML** above).
+TOML / `~/.nano_claude/config.json` can also set `model` if you do **not** set any of `MODEL`, `ANTHROPIC_MODEL`, `OPENROUTER_MODEL`, or `OPENAI_COMPAT_MODEL` in `.env`/shell (see **Setup → Optional — TOML** above).
 
 ### Anthropic (direct)
 
@@ -405,7 +405,7 @@ See [LiteLLM Proxy](https://docs.litellm.ai/) for routing many providers through
 
 ### One-shot CLI
 
-The same variables apply when running `nano-claw-code -p "..."` or `./start.sh` from the project directory (or after exporting globally).
+The same variables apply when running `nano-claude-code -p "..."` or `./start.sh` from the project directory (or after exporting globally).
 
 ---
 
@@ -415,7 +415,7 @@ The same variables apply when running `nano-claw-code -p "..."` or `./start.sh` 
 
 ```bash
 ./start.sh -p "Explain this codebase"
-# or: nano-claw-code -p "Explain this codebase"
+# or: nano-claude-code -p "Explain this codebase"
 ```
 
 Third-party models and proxies are configured with the environment variables above; see [API providers](#api-providers).
@@ -429,7 +429,7 @@ The repository includes a self-contained evaluation harness in `swebench_harness
 ### Prerequisites
 
 ```bash
-pip install -e .                          # Install nano-claw-code
+pip install -e .                          # Install nano-claude-code
 pip install -r swebench_harness/requirements.txt  # Harness deps (datasets, swebench)
 # or, with uv:
 # uv pip install -e . && uv pip install -r swebench_harness/requirements.txt
@@ -445,7 +445,7 @@ cd swebench_harness
 ```
 
 This will:
-1. Auto-install `nano-claw-code` if not already installed
+1. Auto-install `nano-claude-code` if not already installed
 2. Generate predictions on SWE-bench Lite instances
 3. Run the SWE-bench evaluation harness and produce a JSON report
 
@@ -466,7 +466,7 @@ python run_swebench_claude_code.py --instance-ids instance_ids_pilot_8.txt
 python run_swebench_claude_code.py --resume-from django__django-11099
 ```
 
-Predictions are saved to `results/nano-claw-code/predictions.jsonl` along with full traces (tool calls, model responses, thinking) in `results/nano-claw-code/traces/`.
+Predictions are saved to `results/nano-claude-code/predictions.jsonl` along with full traces (tool calls, model responses, thinking) in `results/nano-claude-code/traces/`.
 
 **Step 2 — Evaluate predictions:**
 
@@ -474,13 +474,13 @@ Predictions are saved to `results/nano-claw-code/predictions.jsonl` along with f
 python run_swebench_claude_code.py --evaluate
 ```
 
-This runs the official SWE-bench Docker evaluation and produces a JSON report (e.g., `claude-sonnet-4-6.nano-claw-code-swebench.json`).
+This runs the official SWE-bench Docker evaluation and produces a JSON report (e.g., `claude-sonnet-4-6.nano-claude-code-swebench.json`).
 
 **Step 3 — View results:**
 
 ```bash
 # Summary is printed to stdout; detailed report in the JSON file
-cat claude-sonnet-4-6.nano-claw-code-swebench.json | python -m json.tool
+cat claude-sonnet-4-6.nano-claude-code-swebench.json | python -m json.tool
 ```
 
 ### Configuration

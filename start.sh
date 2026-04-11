@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Nano Claw Code — Python launcher
+# Nano Claude Code — Python launcher
 #
 # Usage:
 #   ./start.sh                     # Interactive REPL
@@ -106,8 +106,8 @@ fi
 
 if [ -f "$DIR/.venv/bin/python" ]; then
   PYTHON="$DIR/.venv/bin/python"
-elif ! "$PYTHON" -c "import nano_claw_code" 2>/dev/null; then
-  echo "First run: installing nano-claw-code..."
+elif ! "$PYTHON" -c "import nano_claude_code" 2>/dev/null; then
+  echo "First run: installing nano-claude-code..."
   "$PYTHON" -m pip install -e "$DIR" --quiet 2>/dev/null || \
     "$PYTHON" -m pip install -e "$DIR" --user --quiet 2>/dev/null || \
     echo "Warning: pip install failed. Try: pip install -e $DIR"
@@ -115,4 +115,4 @@ fi
 
 # ── Launch ────────────────────────────────────────────────────────────────
 
-exec "$PYTHON" -m nano_claw_code "$@"
+exec "$PYTHON" -m nano_claude_code "$@"

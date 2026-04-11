@@ -6,7 +6,7 @@ forked (run in a sub-agent loop).
 
 Skill directories searched (in order, later entries override on name collision):
   1. ~/.claude/skills/*/SKILL.md        (global user skills)
-  2. ~/.nano_claw/skills/*/SKILL.md     (nano-claw-specific global)
+  2. ~/.nano_claude/skills/*/SKILL.md     (nano-claude-specific global)
   3. .claude/skills/*/SKILL.md          (project-local, walks up to git root)
 
 Frontmatter (Claude Code–aligned; all optional except conventions):
@@ -27,8 +27,8 @@ import re
 from pathlib import Path
 from typing import Any
 
-from nano_claw_code.config import CONFIG_DIR
-from nano_claw_code.frontmatter import (
+from nano_claude_code.config import CONFIG_DIR
+from nano_claude_code.frontmatter import (
     meta_bool,
     meta_int,
     parse_comma_list,
@@ -123,8 +123,8 @@ def discover_skills(cwd: str | None = None) -> dict[str, dict[str, Any]]:
     global_claude = Path.home() / ".claude" / "skills"
     merged.update(_scan_skill_dir(global_claude))
 
-    nano_claw_skills = CONFIG_DIR / "skills"
-    merged.update(_scan_skill_dir(nano_claw_skills))
+    nano_claude_skills = CONFIG_DIR / "skills"
+    merged.update(_scan_skill_dir(nano_claude_skills))
 
     start = Path(cwd) if cwd else Path.cwd()
     for project_dir in reversed(_walk_up_for_skills(start)):
@@ -222,9 +222,9 @@ def execute_skill_forked(
     cwd: Path,
 ) -> str:
     """Execute a skill in forked (sub-agent) mode."""
-    from nano_claw_code.config import resolve_api_env
-    from nano_claw_code.prompts import build_system_prompt, resolve_model
-    from nano_claw_code.tools_impl import anthropic_tool_defs, dispatch_tool
+    from nano_claude_code.config import resolve_api_env
+    from nano_claude_code.prompts import build_system_prompt, resolve_model
+    from nano_claude_code.tools_impl import anthropic_tool_defs, dispatch_tool
     import anthropic as anth
 
     api_env = resolve_api_env()

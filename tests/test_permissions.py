@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from nano_claw_code.permissions import describe_permission, is_preapproved_url, needs_permission
+from nano_claude_code.permissions import describe_permission, is_preapproved_url, needs_permission
 
 
 def test_auto_read_free():

@@ -15,7 +15,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from nano_claw_code.frontmatter import expand_memory_includes
+from nano_claude_code.frontmatter import expand_memory_includes
 
 MAX_FILE_CHARS = 12_000
 MAX_SECTION_CHARS = 56_000

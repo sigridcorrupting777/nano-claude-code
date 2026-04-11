@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from nano_claw_code import config as cfg
+from nano_claude_code import config as cfg
 
 
 def test_parse_dotenv_quotes(tmp_path: Path):
@@ -96,10 +96,10 @@ def test_resolve_model_openai_compat(monkeypatch):
     assert cfg.resolve_model() == "Kimi-K2.5"
 
 
-def test_parse_toml_options_nano_claw_section(tmp_path):
+def test_parse_toml_options_nano_claude_section(tmp_path):
     p = tmp_path / "c.toml"
     p.write_text(
-        '[nano_claw]\nmodel = "m1"\nverbose = true\nunknown = 1\n',
+        '[nano_claude]\nmodel = "m1"\nverbose = true\nunknown = 1\n',
         encoding="utf-8",
     )
     d = cfg._parse_toml_options(p)
@@ -115,10 +115,10 @@ def test_load_config_toml_project_overrides_user(tmp_path, monkeypatch):
     monkeypatch.setattr(cfg, "_git_toplevel", lambda: repo.resolve())
     user = tmp_path / "homecfg"
     user.mkdir()
-    (user / "config.toml").write_text('[nano_claw]\nmodel = "user-m"\n', encoding="utf-8")
-    (repo / ".nano_claw").mkdir(parents=True)
-    (repo / ".nano_claw" / "config.toml").write_text(
-        '[nano_claw]\nmodel = "proj-m"\npermission_mode = "manual"\n',
+    (user / "config.toml").write_text('[nano_claude]\nmodel = "user-m"\n', encoding="utf-8")
+    (repo / ".nano_claude").mkdir(parents=True)
+    (repo / ".nano_claude" / "config.toml").write_text(
+        '[nano_claude]\nmodel = "proj-m"\npermission_mode = "manual"\n',
         encoding="utf-8",
     )
     monkeypatch.setattr(cfg, "CONFIG_DIR", user)
@@ -140,9 +140,9 @@ def test_load_config_env_model_skips_toml_model(tmp_path, monkeypatch):
     repo.mkdir()
     monkeypatch.chdir(repo)
     monkeypatch.setattr(cfg, "_git_toplevel", lambda: repo.resolve())
-    (repo / ".nano_claw").mkdir(parents=True)
-    (repo / ".nano_claw" / "config.toml").write_text(
-        '[nano_claw]\nmodel = "toml-m"\n',
+    (repo / ".nano_claude").mkdir(parents=True)
+    (repo / ".nano_claude" / "config.toml").write_text(
+        '[nano_claude]\nmodel = "toml-m"\n',
         encoding="utf-8",
     )
     nc = tmp_path / "nc"
@@ -165,9 +165,9 @@ def test_load_config_json_overrides_toml(tmp_path, monkeypatch):
     repo.mkdir()
     monkeypatch.chdir(repo)
     monkeypatch.setattr(cfg, "_git_toplevel", lambda: repo.resolve())
-    (repo / ".nano_claw").mkdir(parents=True)
-    (repo / ".nano_claw" / "config.toml").write_text(
-        '[nano_claw]\nmodel = "toml-m"\nmax_tokens = 111\n',
+    (repo / ".nano_claude").mkdir(parents=True)
+    (repo / ".nano_claude" / "config.toml").write_text(
+        '[nano_claude]\nmodel = "toml-m"\nmax_tokens = 111\n',
         encoding="utf-8",
     )
     nc = tmp_path / "nc"

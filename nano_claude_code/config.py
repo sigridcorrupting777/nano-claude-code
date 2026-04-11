@@ -2,8 +2,8 @@
 
 Priority (highest → lowest) for non-secret options:
   1. Shell / project .env (model env vars: MODEL, ANTHROPIC_MODEL, …) — if set, TOML ``model`` is ignored
-  2. ~/.nano_claw/config.json (slash-commands; overwrites TOML for keys present)
-  3. TOML: ~/.nano_claw/config.toml, then ``.nano_claw/config.toml`` from git root → cwd (later file wins)
+  2. ~/.nano_claude/config.json (slash-commands; overwrites TOML for keys present)
+  3. TOML: ~/.nano_claude/config.toml, then ``.nano_claude/config.toml`` from git root → cwd (later file wins)
   4. Built-in defaults
 
 API keys and base URLs still come only from .env / environment (never from TOML).
@@ -30,7 +30,7 @@ if sys.version_info >= (3, 11):
 else:
     import tomli as tomllib
 
-CONFIG_DIR = Path.home() / ".nano_claw"
+CONFIG_DIR = Path.home() / ".nano_claude"
 SESSIONS_DIR = CONFIG_DIR / "sessions"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 HISTORY_FILE = CONFIG_DIR / "history"
@@ -54,7 +54,7 @@ COST_PER_1K = {
 
 PERMISSION_MODES = ["auto", "accept-all", "manual"]
 
-# Keys allowed in [nano_claw] or at file root (Codex-style flat keys also accepted at root).
+# Keys allowed in [nano_claude] or at file root (Codex-style flat keys also accepted at root).
 TOML_OPTION_KEYS = frozenset({
     "model",
     "max_tokens",
@@ -170,8 +170,8 @@ def _parse_toml_options(path: Path) -> dict[str, Any]:
     except Exception:
         return {}
 
-    if "nano_claw" in data and isinstance(data["nano_claw"], dict):
-        table = data["nano_claw"]
+    if "nano_claude" in data and isinstance(data["nano_claude"], dict):
+        table = data["nano_claude"]
     else:
         table = {k: v for k, v in data.items() if not isinstance(v, dict)}
 
@@ -183,13 +183,13 @@ def _parse_toml_options(path: Path) -> dict[str, Any]:
 
 
 def _project_toml_chain_root_to_cwd() -> list[Path]:
-    """Paths to .nano_claw/config.toml from git root down to cwd (later overwrites earlier)."""
+    """Paths to .nano_claude/config.toml from git root down to cwd (later overwrites earlier)."""
     cwd = Path.cwd().resolve()
     root = _git_toplevel() or cwd
     found: list[Path] = []
     p = cwd
     while True:
-        t = p / ".nano_claw" / "config.toml"
+        t = p / ".nano_claude" / "config.toml"
         if t.is_file():
             found.append(t)
         if p == root:
@@ -202,7 +202,7 @@ def _project_toml_chain_root_to_cwd() -> list[Path]:
 
 
 def load_merged_toml_options() -> dict[str, Any]:
-    """Merge TOML options: user ~/.nano_claw/config.toml, then repo root → cwd."""
+    """Merge TOML options: user ~/.nano_claude/config.toml, then repo root → cwd."""
     merged: dict[str, Any] = {}
     user = CONFIG_DIR / "config.toml"
     if user.is_file():

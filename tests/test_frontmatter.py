@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from nano_claw_code.frontmatter import (
+from nano_claude_code.frontmatter import (
     expand_memory_includes,
     meta_bool,
     meta_int,
